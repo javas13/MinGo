@@ -1,0 +1,124 @@
+{
+  "resources/css/admin-login.css": {
+    "file": "assets/admin-login-quzw-myw.css",
+    "src": "resources/css/admin-login.css",
+    "isEntry": true
+  },
+  "resources/css/admin.css": {
+    "file": "assets/admin-BRpbiQA6.css",
+    "src": "resources/css/admin.css",
+    "isEntry": true
+  },
+  "resources/css/main.css": {
+    "file": "assets/main-k1lmyciI.css",
+    "src": "resources/css/main.css",
+    "isEntry": true
+  },
+  "resources/js/admin.js": {
+    "file": "assets/admin-BB999w3h.js",
+    "name": "admin",
+    "src": "resources/js/admin.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-C-WXEPs5.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/eventTime.js": {
+    "file": "assets/eventTime-Bs-XxEEr.js",
+    "name": "eventTime",
+    "src": "resources/js/eventTime.js",
+    "isEntry": true
+  },
+  "resources/js/phoneMask.js": {
+    "file": "assets/phoneMask-BaMi22QR.js",
+    "name": "phoneMask",
+    "src": "resources/js/phoneMask.js",
+    "isEntry": true
+  },
+  "resources/js/script.js": {
+    "file": "assets/script-CZMQ9KYi.js",
+    "name": "script",
+    "src": "resources/js/script.js",
+    "isEntry": true
+  },
+  "resources/js/test.js": {
+    "file": "assets/test-Csx5M-Vh.js",
+    "name": "test",
+    "src": "resources/js/test.js",
+    "isEntry": true
+  },
+  "resources/libs/bootstrap/bootstrap.bundle.js": {
+    "file": "assets/bootstrap.bundle-DmvQUsZ0.js",
+    "name": "bootstrap.bundle",
+    "src": "resources/libs/bootstrap/bootstrap.bundle.js",
+    "isEntry": true
+  },
+  "resources/libs/bootstrap/bootstrap.css": {
+    "file": "assets/bootstrap-tK7EUtyc.css",
+    "src": "resources/libs/bootstrap/bootstrap.css",
+    "isEntry": true
+  },
+  "resources/libs/fontawesome/css/all.css": {
+    "file": "assets/all-B4FD_cBw.css",
+    "src": "resources/libs/fontawesome/css/all.css",
+    "isEntry": true
+  },
+  "resources/libs/fontawesome/webfonts/fa-brands-400.ttf": {
+    "file": "assets/fa-brands-400-Dur5g48u.ttf",
+    "src": "resources/libs/fontawesome/webfonts/fa-brands-400.ttf"
+  },
+  "resources/libs/fontawesome/webfonts/fa-brands-400.woff2": {
+    "file": "assets/fa-brands-400-O7nZalfM.woff2",
+    "src": "resources/libs/fontawesome/webfonts/fa-brands-400.woff2"
+  },
+  "resources/libs/fontawesome/webfonts/fa-regular-400.ttf": {
+    "file": "assets/fa-regular-400-Bf3rG5Nx.ttf",
+    "src": "resources/libs/fontawesome/webfonts/fa-regular-400.ttf"
+  },
+  "resources/libs/fontawesome/webfonts/fa-regular-400.woff2": {
+    "file": "assets/fa-regular-400-DgEfZSYE.woff2",
+    "src": "resources/libs/fontawesome/webfonts/fa-regular-400.woff2"
+  },
+  "resources/libs/fontawesome/webfonts/fa-solid-900.ttf": {
+    "file": "assets/fa-solid-900-BV3CbEM2.ttf",
+    "src": "resources/libs/fontawesome/webfonts/fa-solid-900.ttf"
+  },
+  "resources/libs/fontawesome/webfonts/fa-solid-900.woff2": {
+    "file": "assets/fa-solid-900-DOQJEhcS.woff2",
+    "src": "resources/libs/fontawesome/webfonts/fa-solid-900.woff2"
+  },
+  "resources/libs/fontawesome/webfonts/fa-v4compatibility.ttf": {
+    "file": "assets/fa-v4compatibility-B9MWI-E6.ttf",
+    "src": "resources/libs/fontawesome/webfonts/fa-v4compatibility.ttf"
+  },
+  "resources/libs/fontawesome/webfonts/fa-v4compatibility.woff2": {
+    "file": "assets/fa-v4compatibility-BX8XWJtE.woff2",
+    "src": "resources/libs/fontawesome/webfonts/fa-v4compatibility.woff2"
+  },
+  "resources/libs/jquery/dist/jquery-3.7.1.js": {
+    "file": "assets/jquery-3.7.1-T69IKIHc.js",
+    "name": "jquery-3.7.1",
+    "src": "resources/libs/jquery/dist/jquery-3.7.1.js",
+    "isEntry": true
+  },
+  "resources/libs/twentytwenty-master/css/twentytwenty.css": {
+    "file": "assets/twentytwenty-Bqc1Ny1c.css",
+    "src": "resources/libs/twentytwenty-master/css/twentytwenty.css",
+    "isEntry": true
+  },
+  "resources/libs/twentytwenty-master/js/jquery.event.move.js": {
+    "file": "assets/jquery.event.move-nykcZIr9.js",
+    "name": "jquery.event.move",
+    "src": "resources/libs/twentytwenty-master/js/jquery.event.move.js",
+    "isEntry": true
+  },
+  "resources/libs/twentytwenty-master/js/jquery.twentytwenty.js": {
+    "file": "assets/jquery.twentytwenty-BEB4UVa0.js",
+    "name": "jquery.twentytwenty",
+    "src": "resources/libs/twentytwenty-master/js/jquery.twentytwenty.js",
+    "isEntry": true
+  }
+}

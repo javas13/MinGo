@@ -1,0 +1,23 @@
+img{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.logo-bf{
+    top: 30px;
+    left: 30px;
+    height: 50px;
+}
+
+.login-form{
+    background-color: #fff;
+    border-radius: 15px;
+}
+
+.form-control:focus {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: none;
+}
