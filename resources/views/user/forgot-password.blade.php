@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@section('title', 'Восстановление пароля - MinGo')
+@section('canonical', 'https://mingonow.ru/forgot-password')
+@section('ogTitle', 'Восстановление пароля - MinGo')
+
 @section('title', 'Home')
 
 @section('content')

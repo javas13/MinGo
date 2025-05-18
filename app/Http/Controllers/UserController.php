@@ -27,6 +27,7 @@ class UserController extends Controller
         ], [
             'password.min' => 'Пароль должен содержать минимум 8 символов!',
         ]);
+        
 
         $userData = $request->all();
         $userData += ["is_admin" => 0];
@@ -61,7 +62,7 @@ class UserController extends Controller
 
         return  back()->withErrors([
            'error' => 'Неверный email или пароль',
-        ]);
+        ])->withInput($request->only('email', 'remember'));
     }
 
 

@@ -19,7 +19,7 @@
 	<main class="page-not-found">
 		<div class="page-not-found__title">Ошибка 404...</div>
 		<div class="page-not-found__subtitle">Такой страницы не существует...</div>
-		<a class="page-not-found__btn" href="/">На главную</a>
+		<a class="btn-main-a" href="/">На главную</a>
 	</main>
 </body>
 

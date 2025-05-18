@@ -46,4 +46,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             'password' => 'hashed',
         ];
     }
+
+    public function favoritePlaces()
+    {
+        return $this->belongsToMany(Place::class, 'favorites')
+            ->withTimestamps();
+    }
 }

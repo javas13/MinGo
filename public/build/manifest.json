@@ -5,23 +5,29 @@
     "isEntry": true
   },
   "resources/css/admin.css": {
-    "file": "assets/admin-BRpbiQA6.css",
+    "file": "assets/admin-smFfU8Z4.css",
     "src": "resources/css/admin.css",
     "isEntry": true
   },
+  "resources/css/app.css": {
+    "file": "assets/app-l0sNRNKZ.js",
+    "name": "app",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
   "resources/css/main.css": {
-    "file": "assets/main-k1lmyciI.css",
+    "file": "assets/main-DE0qZyFq.css",
     "src": "resources/css/main.css",
     "isEntry": true
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-BB999w3h.js",
+    "file": "assets/admin-BAz8K-IC.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-C-WXEPs5.js",
+    "file": "assets/app-B7-khk-n.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
@@ -32,6 +38,18 @@
     "src": "resources/js/eventTime.js",
     "isEntry": true
   },
+  "resources/js/fancybox.js": {
+    "file": "assets/fancybox-l0sNRNKZ.js",
+    "name": "fancybox",
+    "src": "resources/js/fancybox.js",
+    "isEntry": true
+  },
+  "resources/js/kviz.js": {
+    "file": "assets/kviz-BGTYK9_a.js",
+    "name": "kviz",
+    "src": "resources/js/kviz.js",
+    "isEntry": true
+  },
   "resources/js/phoneMask.js": {
     "file": "assets/phoneMask-BaMi22QR.js",
     "name": "phoneMask",
@@ -39,15 +57,9 @@
     "isEntry": true
   },
   "resources/js/script.js": {
-    "file": "assets/script-CZMQ9KYi.js",
+    "file": "assets/script-DVUf2zAu.js",
     "name": "script",
     "src": "resources/js/script.js",
-    "isEntry": true
-  },
-  "resources/js/test.js": {
-    "file": "assets/test-Csx5M-Vh.js",
-    "name": "test",
-    "src": "resources/js/test.js",
     "isEntry": true
   },
   "resources/libs/bootstrap/bootstrap.bundle.js": {

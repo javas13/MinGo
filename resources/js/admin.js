@@ -56,6 +56,26 @@ $(function () {
     //     }
     // });
 
+        const $input = $(".max-length-count-input-js");
+        const $currentCount = $("#current-count");
+        const $maxLength = $(".max-length-js");
+        const $charCounter = $(".char-counter-js");
+        
+        const maxLength = parseInt($input.attr("maxlength"));
+        $maxLength.text(maxLength);
+
+        $input.on("input", function() {
+            const currentLength = $(this).val().length;
+            $currentCount.text(currentLength);
+
+            // Меняем стиль, если достигнут лимит
+            if (currentLength >= maxLength) {
+            $charCounter.addClass("limit-reached");
+            } else {
+            $charCounter.removeClass("limit-reached");
+            }
+        });
+
 
     $('.js-menu')
         .on('mouseenter', function () {

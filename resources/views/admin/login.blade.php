@@ -9,7 +9,7 @@
     @vite(['resources/libs/bootstrap/bootstrap.bundle.js', 'resources/libs/bootstrap/bootstrap.css', 'resources/css/admin-login.css'])
 </head>
 <body style="background-color: #bfbfbf;" class="position-relative">
-<img class="logo-bf position-absolute w-auto" src="img/admin/logobf-transparent.png" alt="">
+{{-- <img class="logo-bf position-absolute w-auto" src="img/admin/logobf-transparent.png" alt=""> --}}
 <div class="container">
     <div class="row justify-content-center">
         <div style="width: 400px" class="col-md-auto vh-100 d-flex">

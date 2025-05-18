@@ -8,10 +8,12 @@ use App\Models\Place;
 use App\Models\PlaceImage;
 use App\Models\Schedule;
 use App\Models\News;
+use App\Models\District;
 use App\Models\Category;
 use App\Models\Faq;
 use App\Models\Banner;
 use App\Models\Kitchen;
+use App\Models\City;
 use App\Models\PlaceKitchen;
 use App\Models\Staff;
 use App\Models\NewsletterSubscription;
@@ -25,7 +27,8 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Config;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
+// use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Validator;
@@ -427,12 +430,14 @@ class AdminController extends Controller
     }
 
     public function places(Request $request){
-        return View('admin.places.places-list', ['places' => Place::paginate(20)]);
+        return View('admin.places.places-list', ['places' => Place::paginate(30)]);
     }
 
     public function placesAdd(Request $request){
         $days = config('days');
-        return View('admin.places.place-add', ['categories' => Category::All(), 'days' => $days, 'kitchens' => Kitchen::All()]);
+        $cityFirst = City::first();
+        $districts = District::where('city_id', $cityFirst->id)->get();
+        return View('admin.places.place-add', ['categories' => Category::All(), 'days' => $days, 'kitchens' => Kitchen::All(),'cities' => City::All(), 'districts' => $districts]);
     }
 
     public function placesAddStore(Request $request){
@@ -443,6 +448,8 @@ class AdminController extends Controller
                 'schedules.*.is_closed' => 'required|boolean',
                 'schedules.*.day_name' => 'required',
                 'name' => ['required', 'max:300'],
+                'seo_description' => ['required', 'max:300'],
+                'image_alt' => ['required', 'max:300'],
                 'address' => ['required', 'max:300'],
                 'description' => ['required'],
                 'category_id' => ['required'],
@@ -483,6 +490,8 @@ class AdminController extends Controller
                 'schedules.*.is_closed' => 'required|boolean',
                 'schedules.*.day_name' => 'required',
                 'name' => ['required', 'max:300'],
+                'seo_description' => ['required', 'max:300'],
+                'image_alt' => ['required', 'max:300'],
                 'address' => ['required', 'max:300'],
                 'description' => ['required'],
                 'category_id' => ['required'],
@@ -504,12 +513,20 @@ class AdminController extends Controller
         $place->address = $request->input('address');
         $place->description = $request->input('description');
         $place->average_bill = $request->input('average_bill');
+        $place->phone_formatted = $request->input('phone_formatted');
         $place->category_id = $request->input('category_id');
+        $place->city_id = $request->input('city_id');
+        $place->check_in_price_from = $request->input('check_in_price_from');
+        $place->check_in_price_to = $request->input('check_in_price_to');
+        $place->district_id = $request->input('district_id');
+        $place->image_alt = $request->input('image_alt');
         $place->mood = $validated['mood'] ?? [];
         $place->company = $validated['company'] ?? [];
         $place->activity = $validated['activity'] ?? [];
         $place->budget = $validated['budget'] ?? [];
         $place->atmosphere = $validated['atmosphere'] ?? [];
+        $place->latitude = $request->input('latitude');
+        $place->longitude = $request->input('longitude');
         if($request->input('is_active') != null){
             $place->is_active = 1;
         }
@@ -524,19 +541,43 @@ class AdminController extends Controller
             $place->is_schedule_active = 0;
         }
 
+        if($request->input('seo_name') == null){
+            $place->seo_name = $place->category->name_single. ' '. $place->name. ' в '. $place->city->second_name;
+        }
+        else{
+            $place->seo_name = $request->input('seo_name');
+        }
+     
+        $place->seo_description = $request->input('seo_description');
+        
+
+
+        $place->save();
+        $placeSlug = Str::slug($place->name).'-'.$place->id;
+        $place->slug = $placeSlug;
+        $place->save();
+
+
         if($request->file('image') != null){
             $manager = new ImageManager(new Driver());
             $img = $manager->read($request->file('image')->getRealPath());
-            $extension = $request->file('image')->getClientOriginalExtension();
-            $filename = Str::random(20) . '_' . time() . '.' . $extension;
-            $path = $img->save(public_path('storage/places/original/'.$filename));
-            $place->image_src = 'storage/places/thumbs/' .$filename;
+            $imgLarge = $manager->read($request->file('image')->getRealPath());
+            $filename = Str::random(20) . '_' . time() . '.' . 'webp';
+            $prefix = substr(md5($place->id), 0, 2);
+            $quality = $img->width() > 2000 ? 75 : 85;
+            Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/original');
+            if($img->height() > 1000){
+                $newWidth = (1000 / $img->height()) * $img->width();
+                $imgLarge->resize((int)$newWidth, 1000);
+            }
+            $path = $imgLarge->toWebp($quality)->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename));
+            $place->image_src = '/storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename;
             $img->cover(600, 600);
-            $path = $img->save(public_path('storage/places/thumbs/'.$filename));
-            $place->thumb_image_src = 'storage/places/thumbs/' .$filename;
+            Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/thumbs');
+            $path = $img->toWebp($quality)->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename));
+            $place->thumb_image_src = '/storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename;
+            $place->save();
         }
-
-        $place->save();
 
         $this->processImages($request, $place);
 
@@ -577,7 +618,8 @@ class AdminController extends Controller
         $days = config('days');
         $placeKitchensArray = PlaceKitchen::where('place_id', $place->id)->get()->toArray();
         $selectedKitchens = array_column($placeKitchensArray, 'kitchen_id');
-        return View('admin.places.place-update', ['place' => $place, 'categories' => Category::All(), 'days' => $days, 'kitchens' => Kitchen::All()->toArray(), 'selectedKitchens' => $selectedKitchens]);
+        $districts = District::where('city_id', old('city_id', $place->city->id))->get();
+        return View('admin.places.place-update', ['place' => $place, 'categories' => Category::All(), 'days' => $days, 'kitchens' => Kitchen::All()->toArray(), 'selectedKitchens' => $selectedKitchens, 'cities' => City::All(), 'districts' => $districts]);
     }
 
     public function placesUpdateStore($id, Request $request){
@@ -587,8 +629,10 @@ class AdminController extends Controller
                 'schedules.*.is_closed' => 'required|boolean',
                 'schedules.*.day_name' => 'required',
                 'name' => ['required', 'max:300'],
+                'seo_description' => ['required', 'max:300'],
                 'address' => ['required', 'max:300'],
                 'description' => ['required'],
+                'image_alt' => ['required', 'max:300'],
                 'category_id' => ['required'],
                 'mood' => 'nullable|array',
                 'mood.*' => 'in:' . implode(',', array_keys(Place::MOOD_ANSWERS)),
@@ -627,6 +671,8 @@ class AdminController extends Controller
                 'schedules.*.is_closed' => 'required|boolean',
                 'schedules.*.day_name' => 'required',
                 'name' => ['required', 'max:300'],
+                'seo_description' => ['required', 'max:300'],
+                'image_alt' => ['required', 'max:300'],
                 'address' => ['required', 'max:300'],
                 'description' => ['required'],
                 'category_id' => ['required'],
@@ -648,12 +694,20 @@ class AdminController extends Controller
         $place->address = $request->input('address');
         $place->average_bill = $request->input('average_bill');
         $place->description = $request->input('description');
+        $place->phone_formatted = $request->input('phone_formatted');
         $place->category_id = $request->input('category_id');
+        $place->city_id = $request->input('city_id');
+        $place->district_id = $request->input('district_id');
+        $place->check_in_price_from = $request->input('check_in_price_from');
+        $place->check_in_price_to = $request->input('check_in_price_to');
+        $place->image_alt = $request->input('image_alt');
         $place->mood = $validated['mood'] ?? [];
         $place->company = $validated['company'] ?? [];
         $place->activity = $validated['activity'] ?? [];
         $place->budget = $validated['budget'] ?? [];
         $place->atmosphere = $validated['atmosphere'] ?? [];
+        $place->latitude = $request->input('latitude');
+        $place->longitude = $request->input('longitude');
         $place->kitchens()->sync($request->kitchens ?? []);
         if($request->input('is_active') != null){
             $place->is_active = 1;
@@ -669,19 +723,43 @@ class AdminController extends Controller
             $place->is_schedule_active = 0;
         }
 
+        if($request->input('seo_name') == null){
+            $place->seo_name = $place->category->name_single. ' '. $place->name. ' в '. $place->city->second_name;
+        }
+        else{
+            $place->seo_name = $request->input('seo_name');
+        }
+     
+        $place->seo_description = $request->input('seo_description');
+
+
+        $place->save();
+
+        $placeSlug = Str::slug($place->name).'-'.$place->id;
+        $place->slug = $placeSlug;
+        $place->save();
+
         if($request->file('image') != null){
             $manager = new ImageManager(new Driver());
             $img = $manager->read($request->file('image')->getRealPath());
-            $extension = $request->file('image')->getClientOriginalExtension();
-            $filename = Str::random(20) . '_' . time() . '.' . $extension;
-            $path = $img->save(public_path('storage/places/original/'.$filename));
-            $place->image_src = 'storage/places/thumbs/' .$filename;
+            $imgLarge = $manager->read($request->file('image')->getRealPath());
+            $filename = Str::random(20) . '_' . time() . '.' . 'webp';
+            $prefix = substr(md5($place->id), 0, 2);
+            $quality = $img->width() > 2000 ? 75 : 85;
+            Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/original');
+            if($img->height() > 1000){
+                $newWidth = (1000 / $img->height()) * $img->width();
+                $imgLarge->resize((int)$newWidth, 1000);
+            }
+            $path = $imgLarge->toWebp($quality)->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename));
+            $place->image_src = '/storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename;
             $img->cover(600, 600);
-            $path = $img->save(public_path('storage/places/thumbs/'.$filename));
-            $place->thumb_image_src = 'storage/places/thumbs/' .$filename;
+            Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/thumbs');
+            $path = $img->toWebp($quality)->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename));
+            $place->thumb_image_src = '/storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename;
+            $place->save();
         }
 
-        $place->save();
 
 
         $this->processImages($request, $place);
@@ -722,6 +800,9 @@ class AdminController extends Controller
         $placeCopy = new Place();
         $placeCopy = $place->replicate();
         $placeCopy->name = 'Копия ' . $place->name;
+        $placeCopy->save();
+        $placeSlug = Str::slug($placeCopy->name).'-'.$placeCopy->id;
+        $placeCopy->slug = $placeSlug;
         $placeCopy->save();
 
         foreach(Schedule::where('place_id', $place->id) as $elem){
@@ -771,32 +852,62 @@ class AdminController extends Controller
         if ($request->hasFile('uploaded_images')) {
             foreach ($request->file('uploaded_images') as $order => $file) {
 
+                // $manager = new ImageManager(new Driver());
+                // $img = $manager->read($file->getRealPath());
+                // $extension = $file->getClientOriginalExtension();
+                // $filename = Str::random(20) . '_' . time() . '.' . $extension;
+                // $prefix = substr(md5($place->id), 0, 2);
+                // Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/original');
+                // $path = $img->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename));
+                // $placeImg = new PlaceImage();
+                // $placeImg->place_id = $place->id;
+                // $placeImg->image_src = 'storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename;
+                // $img->cover(600, 600);
+                // Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/thumbs');
+                // $path = $img->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename));
+                // $placeImg->thumb_image_src = 'storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename;
+                // $placeImg->sort_order = count($existingImages) + $order;
+                // $placeImg->save();
+
+
                 $manager = new ImageManager(new Driver());
                 $img = $manager->read($file->getRealPath());
-                $extension = $file->getClientOriginalExtension();
-                $filename = Str::random(20) . '_' . time() . '.' . $extension;
-                $path = $img->save(public_path('storage/places/original/'.$filename));
+                $imgLarge = $manager->read($file->getRealPath());
+                $filename = Str::random(20) . '_' . time() . '.' . 'webp';
+                $prefix = substr(md5($place->id), 0, 2);
+                $quality = $img->width() > 2000 ? 75 : 85;
+                Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/original');
+                if($img->height() > 1000){
+                    $newWidth = (1000 / $img->height()) * $img->width();
+                    $imgLarge->resize((int)$newWidth, 1000);
+                }
+                $path = $imgLarge->toWebp($quality)->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename));
                 $placeImg = new PlaceImage();
                 $placeImg->place_id = $place->id;
-                $placeImg->image_src = 'storage/places/original/' .$filename;
+                $placeImg->image_src = '/storage/places/'.$prefix.'/'.$place->slug.'/original'.'/'.$filename;
                 $img->cover(600, 600);
-                $path = $img->save(public_path('storage/places/thumbs/'.$filename));
-                $placeImg->thumb_image_src = 'storage/places/thumbs/' .$filename;
+                Storage::disk('public')->makeDirectory('places/'.$prefix.'/'.$place->slug.'/thumbs');
+                $path = $img->toWebp($quality)->save(public_path('storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename));
+                $placeImg->thumb_image_src = '/storage/places/'.$prefix.'/'.$place->slug.'/thumbs'.'/'.$filename;
                 $placeImg->sort_order = count($existingImages) + $order;
                 $placeImg->save();
 
-                // $path = $file->store('places', 'public');
-                // $place->images()->create([
-                //     'image_path' => $path,
-                //     'order' => count($existingImages) + $order
-                // ]);
+
+
+
             }
         }
     }
 
     public function categoryAddStore(Request $request){
+        $request->validate([
+            'name' => ['required', 'max:255'],
+            'name_single' => ['required', 'max:255'],
+        ]);
+
         $category = new Category;
         $category->name = $request->input('name');
+        $category->name_single = $request->input('name_single');
         if($request->input('sortOrder') != null){
             $category->sort_order = $request->input('sortOrder');
         }
@@ -816,8 +927,13 @@ class AdminController extends Controller
     }
 
     public function categoryUpdateStore($id, Request $request){
+        $request->validate([
+            'name' => ['required', 'max:255'],
+            'name_single' => ['required', 'max:255'],
+        ]);
         $category = Category::find($id);
         $category->name = $request->input('name');
+        $category->name_single = $request->input('name_single');
         if($request->input('sortOrder') != null){
             $category->sort_order = $request->input('sortOrder');
         }
@@ -849,6 +965,86 @@ class AdminController extends Controller
         $kitchen->name = $request->input('name');
         $kitchen->save();
         return redirect()->route('admin.kitchens.list');
+    }
+
+    public function cityAddStore(Request $request){
+        $request->validate([
+            'name' => ['required', 'max:255'],
+            'second_name' => ['required', 'max:255'],
+        ]);
+        $city = new City();
+        $city->name = $request->input('name');
+        $city->second_name = $request->input('second_name');
+
+        $city->save();
+
+        return redirect()->route('admin.cities');
+    }
+
+    public function cityUpdate($id){
+        $city = new City;
+        return View('admin.cities.city-update', ['city' => $city->find($id)]);
+    }
+
+    public function cityUpdateStore($id, Request $request){
+        $request->validate([
+            'name' => ['required', 'max:255'],
+            'second_name' => ['required', 'max:255'],
+        ]);
+        $city = City::find($id);
+        $city->name = $request->input('name');
+        $city->second_name = $request->input('second_name');
+
+        $city->save();
+
+        return redirect()->route('admin.cities');
+    }
+
+    public function cityDelete(City $city){
+        $city->delete();
+
+        return redirect()->route('admin.cities');
+    }
+
+    public function districtsAddStore(Request $request){
+        $request->validate([
+            'name' => ['required', 'max:255'],
+        ]);
+        $district = new District();
+        $district->name = $request->input('name');
+        $district->city_id = $request->input('city_id');
+
+        $district->save();
+
+        return redirect()->route('admin.districts');
+    }
+
+    public function districtsUpdate($id){
+        return View('admin.districts.districts-update', ['cities' => City::all(), 'district' => District::find($id)]);
+    }
+
+    public function districtsUpdateStore($id, Request $request){
+        $request->validate([
+            'name' => ['required', 'max:255'],
+        ]);
+        $district = District::find($id);
+        $district->name = $request->input('name');
+        $district->city_id = $request->input('city_id');
+
+        $district->save();
+
+        return redirect()->route('admin.districts');
+    }
+
+    public function districtsDelete(District $district){
+        $district->delete();
+
+        return redirect()->route('admin.districts');
+    }
+
+    public function byCity(City $city)
+    {
+        return $city->districts;
     }
 
 

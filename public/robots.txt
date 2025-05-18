@@ -1,2 +1,9 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /profile/settings
+Disallow: /favorites
+Disallow: /kviz-results
+Sitemap: https://mingonow.ru/sitemap.xml

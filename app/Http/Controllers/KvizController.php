@@ -21,7 +21,8 @@ class KvizController extends Controller
             'atmosphere' => ['required', 'in:quiet,noisy,any']
         ]);
 
-        $query = Place::select('id', 'name', 'average_bill', 'thumb_image_src', 'address');
+        // $query = Place::select('id', 'name', 'average_bill', 'thumb_image_src', 'address');
+        $query = Place::select('id');
 
         $searchValuesMood = $validated['mood'];
         $query->whereJsonContains('mood', $searchValuesMood);
@@ -36,15 +37,17 @@ class KvizController extends Controller
         $query->whereJsonContains('budget', $searchValuesBudget);
 
         $searchValuesAtmosphere = $validated['atmosphere'];
-        $query->whereJsonContains('atmosphere', $searchValuesAtmosphere);
+        if($searchValuesAtmosphere != 'any'){
+            $query->whereJsonContains('atmosphere', $searchValuesAtmosphere);
+        }
         
-        $places = $query->paginate(24);
-        // $places = $query->get();
+        // $places = $query->paginate(24);
+        $placesIds = $query->get()->modelKeys();
 
         $cacheKey = 'filtered_places_' . uniqid();
 
         // Сохраняем в кэш на 60 минут
-        Cache::put($cacheKey, $places, now()->addMinutes(60));
+        Cache::put($cacheKey, $placesIds, now()->addMinutes(60));
 
         $urlKey = str_replace('filtered_places_', '', $cacheKey);
         $temporaryUrl = route('temporary.results', ['key' => $urlKey]);

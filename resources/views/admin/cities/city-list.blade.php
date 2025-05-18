@@ -8,25 +8,42 @@
 
 <div class="d-flex align-items-center mb-5">
     <h1>Список городов</h1>
+    <a href="{{ route('admin.cities.add') }}" class="btn btn-primary ms-2">Добавить</a>
 </div>
 
-@foreach($cities as $city)
-  <div class="admin_gal_el mb-4">
-    <div class="d-flex flex-column">
-      <div class="admin_gal_el__h1">ID: {{ $city->id }}</div>
-      <div class="admin_gal_el__h1">{{ $city->name }}</div>
-      <div class="d-flex">
-         <a class="fw-bold btn btn-primary me-2" href="{{route('admin.cities.update', $city->id )}}">Редактировать</a>
-         <form method="post" action="{{route('admin.cities.delete', ['city' => $city])}}">
-          @csrf
-          @method('delete')
-         <input type="submit" value="Удалить" class="fw-bold btn btn-danger me-2"/>
-         </form>
-      </div>
-    </div>
-  </div>
-  
-@endforeach
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+      <thead class="table-dark">
+          <tr>
+              <th>ID</th>
+              <th>Название</th>
+              <th>Дата добавления</th>
+              <th>Дата редактирования</th>
+              <th>Действия</th>
+          </tr>
+      </thead>
+      <tbody>
+
+        @foreach($cities as $city)
+          <tr>
+            <td>{{ $city->id }}</td>
+            <td>{{ $city->name }}</td>
+            <td>{{ $city->created_at }}</td>
+            <td>{{ $city->updated_at }}</td>
+            <td>
+                <a href="{{route('admin.cities.update', $city->id )}}" class="btn btn-sm btn-warning me-2">Редактировать</a>
+                <form class="d-inline-block" method="post" action="{{route('admin.cities.delete', ['city' => $city])}}">
+                  @csrf
+                  @method('delete')
+                <input type="submit" value="Удалить" class="btn btn-sm btn-danger"/>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+      </tbody>
+  </table>
+</div>
+
 
 
 

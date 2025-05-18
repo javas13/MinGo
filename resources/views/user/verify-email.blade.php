@@ -1,5 +1,8 @@
 @extends('layouts.main')
 
+@section('title', 'Подтверждение почты - MinGo')
+@section('ogTitle', 'Подтверждение почты - MinGo')
+
 @section('title', 'Home')
 
 @section('content')

@@ -4,32 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>MinGo — Поиск ресторанов и баров</title>
+    <title>@yield('title', 'Title не указан')</title>
+	<meta name="description" content="@yield('description', 'Описание не указано')">
+	<meta property="og:title"
+		content="@yield('ogTitle', 'MinGo — Поиск ресторанов, баров и не только!')">
+	<meta property="og:description"
+		content="@yield('ogDescription', 'MinGo — Это место, где ответив 5 вопросов вы получаете список заведений по вашим предпочтениям, рестораны, бары, кино, бани и не только!')">
+    <meta property="og:site_name" content="MinGo">
+    <meta property="og:type" content="website">
+	<meta property="og:image" content="@yield('ogImage', '/img/annya.jpg')">
+    <meta property="og:locale" content="ru_RU">
+	<link rel="canonical" href="@yield('canonical', '')" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;700&display=swap" rel="stylesheet">
-	@vite(['resources/js/app.js', 'resources/libs/bootstrap/bootstrap.bundle.js', 'resources/js/script.js', 'resources/libs/bootstrap/bootstrap.css', 'resources/css/main.css'])
+	@vite(['resources/js/app.js', 'resources/css/app.css', 'resources/libs/bootstrap/bootstrap.bundle.js', 'resources/js/script.js', 'resources/libs/bootstrap/bootstrap.css', 'resources/css/main.css'])
 </head>
 <body>
     <!-- Шапка сайта -->
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-light" id="mainNavbar">
 			<div class="container">
+                <div class="header__burger header__burger-js">
+					<div class="header__burger-one"></div>
+					<div class="header__burger-one"></div>
+					<div class="header__burger-one"></div>
+				</div>
 				<a class="navbar-brand logo" href="/">
 					<i class="fas fa-utensils me-2"></i>MinGo
 				</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<div class="ms-auto d-flex align-items-center">
-						<a href="mailto:info@gastrofind.com" class="nav-link">
+                <div class="header__mobile-stub"></div>				
+				<div class="header__right-nav collapse navbar-collapse" id="navbarNav">
+					<div class=" ms-auto d-flex align-items-center">
+						<a href="mailto:info@gastrofind.com" class="header__mail nav-link">
 							<i class="fas fa-envelope me-2"></i>
 							info@mingonow.ru
 						</a>
-						<a href="#" class="nav-link heart-link">
+						{{-- <a href="{{ route('favorites') }}" class="nav-link heart-link">
 							<i class="fas fa-heart me-2 heart-icon" style="color: #ff3366;"></i>
 							Избранное
-						</a>
+						</a> --}}
+                        <a href="{{ route('favorites') }}" class="nav-link heart-link">
+                            <span class="icon-wrapper">
+                                <i class="fas fa-heart heart-icon" style="color: #ff3366;"></i>
+                                <span class="badge-count fav-count-js @auth @if(auth()->user()->favoritePlaces()->count() != 0) active @endif @endauth">@auth {{ auth()->user()->favoritePlaces()->count() }} @endauth</span>
+                            </span>
+                            <span class="header__fav-text">Избранное</span>
+                        </a>
                         @auth
                             <div class="ms-auto d-flex align-items-center">
                                 <div class="dropdown">
@@ -38,7 +58,7 @@
                                             id="profileDropdown" 
                                             data-bs-toggle="dropdown">
                                         <i class="fas fa-user-circle me-2"></i>
-                                        <span>Профиль</span>
+                                        <span class="header__profile-text">Профиль</span>
                                     </button>
                                     
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -66,6 +86,64 @@
 				</div>
 			</div>
 		</nav>
+        <div class="header__mobile-menu header__mobile-menu-js">
+            <div class="header__mobile-close-btn header__mobile-close-btn-js">
+                <img src="/img/close2.svg" alt="Иконка закрытия">
+            </div>
+			<nav class="header__mobile-menu-nav">
+				{{-- <ul class="header__mobile-menu-nav-ul">
+					<li>
+						<a href="">Каталог баз</a>
+					</li>
+					<li>
+						<a href="">Услуги</a>
+					</li>
+					<li>
+						<a href="">О нас</a>
+					</li>
+					<li>
+						<a href="">Новости</a>
+					</li>
+					<li>
+						<a href="">Контакты</a>
+					</li>
+				</ul> --}}
+                 @auth
+                            <div class="ms-auto d-flex align-items-center">
+                                <div class="dropdown">
+                                    <button class="header__mobile-profile btn btn-link nav-link dropdown-toggle d-flex align-items-center" 
+                                            type="button" 
+                                            id="profileDropdown2" 
+                                            data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-circle me-2"></i>
+                                        <span class="header__profile-text">Профиль</span>
+                                    </button>
+                                    
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown2">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('profile') }}">
+                                                <i class="fas fa-user me-2"></i>Профиль
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-danger logout-js" href="#">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Выйти
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        @else
+                            <a href="/login" class="nav-link header__mobile-profile">
+                                <i class="fas fa-user-circle me-2"></i>
+                                Войти
+                            </a>
+                        @endauth
+				<a class="header__mobile-mail" href="mailto:info@gastrofind.com" class="header__call-btn header__call-btn-mobile"><i class="fas fa-envelope me-2"></i>
+							info@mingonow.ru</a>
+			</nav>
+		</div>
 	</header>
 
 	<div class="notification-container" id="notificationContainer"></div>
@@ -87,9 +165,9 @@
 						<h3 class="logo mb-3">MinGo</h3>
 					</a>
                     <div class="social-links">
-                        <a href="#" class="text-secondary me-3"><i class="fab fa-telegram-plane fa-lg"></i></a>
-                        <a href="#" class="text-secondary me-3"><i class="fab fa-vk fa-lg"></i></a>
-                        <a href="#" class="text-secondary me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" target="_blank" rel="nofollow" class="text-secondary me-3"><i class="fab fa-telegram-plane fa-lg"></i></a>
+                        <a href="#" target="_blank" rel="nofollow" class="text-secondary me-3"><i class="fab fa-vk fa-lg"></i></a>
+                        <a href="#" target="_blank" rel="nofollow" class="text-secondary me-3"><i class="fab fa-instagram fa-lg"></i></a>
                     </div>
                 </div>
     
@@ -128,7 +206,7 @@
                     <h5 class="mb-3">Партнёрам</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2">
-                            <a href="mailto:partners@gastrofind.com" class="text-decoration-none text-dark">
+                            <a target="_blank" rel="nofollow" href="mailto:partners@gastrofind.com" class="text-decoration-none text-dark">
                                 <i class="fas fa-envelope me-2"></i>partners@mingonow.ru
                             </a>
                         </li>
@@ -149,5 +227,6 @@
             </div>
         </div>
     </footer>
+    @stack('scripts')
 </body>
 </html>

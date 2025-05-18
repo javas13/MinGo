@@ -11,10 +11,10 @@ class ProfileController extends Controller
     {
         $mas = array();
 		$mas[] = array('title' => 'Главная', 'link' => '/');
-		$mas[] = array('title' => 'Профиль', 'link' => '/');
+		$mas[] = array('title' => 'Настройки профиля', 'link' => '/');
 
-        
-        return View('profile.index');
+        $user = $request->user();
+        return View('profile.index', ['breads' => $mas, 'user' => $user]);
     }
 
 

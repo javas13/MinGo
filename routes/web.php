@@ -6,14 +6,19 @@ use App\Models\Banner;
 use App\Models\News;
 use App\Models\NewsletterSubscription;
 use App\Models\Faq;
+use App\Models\City;
+use App\Models\District;
 use App\Models\Kitchen;
+use App\Models\Place;
 use App\Models\Staff;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\KvizController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TestController;
@@ -30,19 +35,19 @@ Route::get('/', function () {
 })->name('home');
 
 
-Route::get('news', [NewsController::class, 'NewsList'])->name('news');
+// Route::get('news', [NewsController::class, 'NewsList'])->name('news');
 
-Route::get('news/{id}', [NewsController::class, 'NewsElem'])->name('news.elem');
+// Route::get('news/{id}', [NewsController::class, 'NewsElem'])->name('news.elem');
 
 
 
-Route::get('about', function () {
-    $mas = array();
-	$mas[] = array('title' => 'Главная', 'link' => '/');
-	$mas[] = array('title' => 'О нас', 'link' => '/');
+// Route::get('about', function () {
+//     $mas = array();
+// 	$mas[] = array('title' => 'Главная', 'link' => '/');
+// 	$mas[] = array('title' => 'О нас', 'link' => '/');
 
-    return view('about', ['breads' => $mas, 'faqs' => Faq::get()->sortBy('sort_order'), 'staff' => Staff::get()->sortBy('sort_order')]);
-})->name('about');
+//     return view('about', ['breads' => $mas, 'faqs' => Faq::get()->sortBy('sort_order'), 'staff' => Staff::get()->sortBy('sort_order')]);
+// })->name('about');
 
 Route::post('kviz-search', [KvizController::class, 'search'])->name('kviz.search');
 
@@ -57,22 +62,36 @@ Route::get('contacts', function () {
 })->name('contacts');
 
 Route::get('/kviz-results/{key}', function ($key) {
+    $mas = array();
+	$mas[] = array('title' => 'Главная', 'link' => '/');
+	$mas[] = array('title' => 'Результаты квиза', 'link' => '/');
+
     $cacheKey = 'filtered_places_' . $key;
     
     if (!Cache::has($cacheKey)) {
-        abort(404, 'Данные не найдены или срок их действия истек');
+        $error = 'Данная ссылка устарела( Пройдите квиз заново для получения результатов';
+        return View('kviz.results', ['error' => $error]);
     }
     
-    $places = Cache::get($cacheKey);
+    $placesIds = Cache::get($cacheKey);
 
-    return View('kviz.results', ['places' => $places]);  
+    $places = Place::whereIn('id', $placesIds)->paginate(24);
+
+    return View('kviz.results', ['places' => $places, 'breads' => $mas]);  
 })->name('temporary.results');
+
+Route::get('/places/{slug}', [PlaceController::class, 'placePage'])->name('places.elem');
+
+Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites');
 
 Route::post('newsletterSubscription', [NewsController::class, 'subscribeToTheNewsletter'])->name('subscribe.newsletter');
 
 Route::post('sendFeedbackTelegram', [FeedbackController::class, 'sendToTelegram'])->name('send.feedback.telegram');
 
 Route::post('sendFeedbackTelegramBase', [FeedbackController::class, 'sendToTelegramBase'])->name('send.feedback.telegram.base');
+
+Route::post('/places/{place}/favorite/toggle', [FavoriteController::class, 'toggle'])->name('favorite.toggle');
+Route::get('/places/{place}/favorite/check', [FavoriteController::class, 'check']);
 
 
 Route::prefix('admin')->group(function () {
@@ -200,6 +219,40 @@ Route::prefix('admin')->group(function () {
 
     Route::post('staff/{id}/update', [AdminController::class, 'staffUpdateStore'])->name('admin.staff.update.store')->middleware('admin');
 
+    Route::get('cities', function (){
+        return view('admin.cities.city-list', ['cities' => City::all()]);
+    })->name('admin.cities')->middleware('admin');
+
+    Route::get('cities/add', function (){
+        return view('admin.cities.city-add', ['cities' => City::all()]);
+    })->name('admin.cities.add')->middleware('admin');
+
+    Route::post('cities/add', [AdminController::class, 'cityAddStore'])->name('admin.cities.add.store')->middleware('admin');
+
+    Route::get('cities/{id}/update', [AdminController::class, 'cityUpdate'])->name('admin.cities.update')->middleware('admin');
+
+    Route::post('cities/{id}/update', [AdminController::class, 'cityUpdateStore'])->name('admin.cities.update.store')->middleware('admin');
+
+    Route::delete('cities/{city}/delete', [AdminController::class, 'cityDelete'])->name('admin.cities.delete')->middleware('admin');
+
+    Route::get('districts', function (){
+        return view('admin.districts.districts-list', ['districts' => District::all()]);
+    })->name('admin.districts')->middleware('admin');
+
+    Route::get('districts/add', function (){
+        return view('admin.districts.districts-add', ['cities' => City::all()]);
+    })->name('admin.districts.add')->middleware('admin');
+
+    Route::post('districts/add', [AdminController::class, 'districtsAddStore'])->name('admin.districts.add.store')->middleware('admin');
+
+    Route::get('districts/{id}/update', [AdminController::class, 'districtsUpdate'])->name('admin.districts.update')->middleware('admin');
+
+    Route::post('districts/{id}/update', [AdminController::class, 'districtsUpdateStore'])->name('admin.districts.update.store')->middleware('admin');
+
+    Route::delete('districts/{district}/delete', [AdminController::class, 'districtsDelete'])->name('admin.districts.delete')->middleware('admin');
+
+    Route::get('/districts/city/{city}', [AdminController::class, 'byCity'])->name('districts.by-city')->middleware('admin');
+
 });
 
 Route::middleware('guest')->group(function () {
@@ -224,7 +277,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth', 'verified')->group(function (){
 
-    Route::get('profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('profile/settings', [ProfileController::class, 'index'])->name('profile');
 
 });
 
@@ -258,6 +311,7 @@ Route::middleware('auth')->group(function (){
     })->middleware('throttle:3,1')->name('verification.send');
 
     Route::get('logout', [UserController::class, 'logout'])->name('logout');
+
 });
 
 

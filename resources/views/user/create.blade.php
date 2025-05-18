@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@section('title', 'Регистрация - MinGo')
+@section('canonical', 'https://mingonow.ru/register')
+@section('ogTitle', 'Регистрация - MinGo')
+
 @section('title', 'Home')
 
 @section('content')

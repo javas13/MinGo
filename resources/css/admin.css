@@ -514,6 +514,12 @@ a:hover {
     width: fit-content;
 }
 
+.custom-pagination{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 .image-item { position: relative; cursor: move; }
     .remove-image { 

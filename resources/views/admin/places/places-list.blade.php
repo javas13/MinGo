@@ -31,7 +31,7 @@
               @if($place->thumb_image_src	== null)
               <img class="img-thumbnail-list" src="/img/admin/no-image.png" alt="Изображение" class="img-thumbnail img-thumbnail-list">
               @else
-              <img class="img-thumbnail-list" src="/{{ $place->thumb_image_src }}" alt="Изображение" class="img-thumbnail img-thumbnail-list">
+              <img class="img-thumbnail-list" src="{{ $place->thumb_image_src }}" alt="Изображение" class="img-thumbnail img-thumbnail-list">
               @endif
           </td>
           <td>{{ $place->name }}</td>
@@ -45,6 +45,7 @@
                   @method('post')
                 <input type="submit" value="Копировать" class="btn btn-sm btn-dark"/>
                 </form>
+                <a target="_blank" href="{{route('places.elem', $place->slug )}}" class="btn btn-sm btn-primary me-2">Перейти</a>
                 <form class="d-inline-block" method="post" action="{{route('admin.places.delete', ['place' => $place])}}">
                   @csrf
                   @method('delete')
@@ -56,6 +57,9 @@
         @endforeach
       </tbody>
   </table>
+  <div class="custom-pagination">
+    {{ $places->appends($_GET)->links() }}
+  </div>
 </div>
 
 <style>

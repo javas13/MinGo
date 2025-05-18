@@ -6,6 +6,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
 <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=5f0a3b1e-fbda-49de-8aaf-b1e7e50de135&lang=ru_RU" type="text/javascript"></script>
 
 <script type="module">
     tinymce.init({
@@ -96,12 +97,36 @@
         <input name="name" type="text" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Название" value="{{ old('name', $place->name) }}">
     </div>
     <div class="mb-3">
-        <label for="address" class="form-label">Адрес</label>
-        <input name="address" type="text" class="form-control @error('address') is-invalid @enderror" id="address" placeholder="Адрес" value="{{ old('address', $place->address) }}">
-    </div>
-    <div class="mb-3">
         <label for="average_bill" class="form-label">Средний чек</label>
         <input name="average_bill" type="number" class="form-control" id="average_bill" placeholder="Средний чек" value="{{ old('average_bill', $place->average_bill) }}">
+    </div>
+    <div class="mb-3">
+        <label for="phone_formatted" class="form-label">Номер телефона</label>
+        <input name="phone_formatted" class="form-control phone-mask-js" id="phone_formatted" value="{{old('phone_formatted', $place->phone_formatted)}}">
+    </div>
+    <div class="mb-3">
+        <label for="city" class="form-label">Город*</label>
+        <select id="city" name="city_id" class="form-select" aria-label="Default select example">
+            @foreach($cities as $city)
+            @if (old('city_id', $place->city_id) == $city->id)
+                <option value="{{ $city->id }}" selected>{{ $city->name }}</option>
+            @else
+                <option value="{{ $city->id }}">{{ $city->name }}</option>
+            @endif
+            @endforeach
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="district" class="form-label">Район*</label>
+        <select id="district" name="district_id" class="form-select" aria-label="Default select example">
+            @foreach($districts as $district)
+            @if (old('district_id', $place->district_id) == $district->id)
+                <option value="{{ $district->id }}" selected>{{ $district->name }}</option>
+            @else
+                <option value="{{ $district->id }}">{{ $district->name }}</option>
+            @endif
+            @endforeach
+        </select>
     </div>
     <div class="mb-3 @error('description') border border-danger @enderror">
         <label class="form-label @error('description') text-danger fw-bold @enderror" for="content" class="form-label">Описание</label>
@@ -118,6 +143,13 @@
             @endif
             @endforeach
         </select>
+    </div>
+    <div class="mb-3 d-flex flex-column">
+        <label class="form-label">Данные для картинга</label>
+        <div class="d-flex flex-row">
+            <input name="check_in_price_from" type="number" class="form-control" placeholder="Цена заезда от" value="{{old('check_in_price_from', $place->check_in_price_from)}}">
+            <input name="check_in_price_to" type="number" class="form-control" placeholder="Цена заезда до" value="{{old('check_in_price_to', $place->check_in_price_to)}}">
+        </div>
     </div>
     <div class="form-group mb-3">
         <label class="form-label">Кухни</label>
@@ -167,6 +199,19 @@
         </div>
         @endforeach
     </div>
+
+    <div class="mb-3">
+        <label for="address" class="form-label">Адрес* (Введите адрес и нажмите кнопку найти для указания точки на карте или укажите точку вручную) (Для точного поиска вы можете указать адрес с городом и регионом но после установки нужной метки в этом поле должен остаться адрес без города и региона!)</label>
+        <input name="address" type="text" class="form-control @error('address') is-invalid @enderror" id="address" placeholder="Адрес" value="{{ old('address', $place->address) }}">
+    </div>
+    <button type="button" id="search-address" class="btn btn-primary">
+            Найти
+    </button>
+
+    <div id="map" style="width: 100%; height: 400px"></div>
+
+    <input type="hidden" value="" name="latitude" value="{{ old('latitude', $place->latitude) }}" id="latitude">
+    <input type="hidden"  value="" name="longitude" value="{{ old('latitude', $place->longitude) }}" id="longitude">
 
     <div class="accordion accordion-flush" id="accordionFlushExample">
         <div class="accordion-item">
@@ -261,6 +306,23 @@
           </div>
         </div>
       </div>
+    
+    <div class="mt-3">
+        <div class="form-label fw-bold">SEO-Данные</div>
+        <p>Seo-name<b> автоматически сформируется</b> при создании заведения<br/>
+        <b>Seo-description необходимо прописать вручную</b> Можете скопировать часть описания заведения и вставить его в seo-description
+        <b>Желательная длина Seo-description от 90 до 160 символов</b>
+    </p>
+    </div>
+    <div class="mb-3">
+        <label for="seoName" class="form-label">Seo name (Название сайта в поиске, генерируется автоматически) (Пример: Бар Марусовка на улице Щапова в Казани)</label>
+        <input name="seo_name" type="text" class="form-control @error('seo_name') is-invalid @enderror" id="seoName" placeholder="Seo name" value="{{ old('seo_name', $place->seo_name) }}">
+    </div>
+    <div class="mb-3">
+        <label for="seoDescript" class="form-label">Seo description* (Описание сайта в поиске, от 90 до 200 символов) (Пример - "Бар Марусовка на улице Щапова. В меню вегетарианское меню, европейская кухня, коктейльная карта, паназиатская кухня, паста, русская кухня, торты на заказ. Средний чек - 1200 рублей.")</label>
+        <input name="seo_description" maxlength="300" type="text" class="form-control max-length-count-input-js @error('seo_description') is-invalid @enderror" id="seoDescript" placeholder="Seo description" value="{{ old('seo_description', $place->seo_description) }}">
+        <div class="char-counter-js"><span id="current-count">0</span>/<span class="max-length-js">100</span></div>
+    </div>
 
     <div class="mt-3 mb-3 d-flex align-items-center">
         <input id="is_active_btn" name="is_active" value="@if(old('is_active', $place->is_active) == 1) 1 @else 0 @endif" @if(old('is_active', $place->is_active) == 1) checked @endif class="form-check-input me-2 check-medium" type="checkbox">
@@ -269,9 +331,11 @@
     <div class="form-group">
         <label for="image">Главное Изображение</label>
         <input type="file" class="form-control" id="image_input" name="image">
-        
+        <label for="image_alt" class="">Название изображения* (Опишите что находится на изображении, пример - Летняя терраса ресторана марусовка, alt атрибут)</label>
+        <input name="image_alt" type="text" class="form-control @error('image_alt') is-invalid @enderror" id="image_alt" placeholder="Название главной картинки" value="{{ old('image_alt', $place->image_alt) }}">
+
         <!-- Превью изображения -->
-        <img class="mb-2" src="/{{ $place->image_src }}" id="preview_image" 
+        <img class="mb-2" src="{{ $place->image_src }}" id="preview_image" 
              style="max-width: 300px; margin-top: 10px; display: block;">
     </div>
 
@@ -282,7 +346,7 @@
         <div id="sortable-container" class="row mb-1">
             @foreach($place->images as $image)
                 <div class="image-item col-md-3 mb-3" data-id="{{ $image->id ?? '' }}">
-                    <img src="/{{ $image->image_src }}" 
+                    <img src="{{ $image->image_src }}" 
                          class="img-thumbnail">
                     <input type="hidden" name="images[]" value="{{ $image->id ?? '' }}">
                     <button type="button" class="btn btn-danger btn-sm remove-image">×</button>
@@ -306,9 +370,55 @@
     </div>
 </form>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/imask/7.6.1/imask.min.js"></script>
 
 <script>
-    
+    IMask(
+        document.querySelector('.phone-mask-js'),
+        {
+            mask: '+{7}(000)000-00-00'
+        }
+    )
+</script>
+
+<script type="module">
+$(document).ready(function() {
+    $('#city').change(function() {
+        const cityId = $(this).val();
+        const $districtSelect = $('#district');
+        
+        // Очищаем и добавляем дефолтный option
+        // $districtSelect.empty().append('<option value="">Выберите район</option>');
+        $districtSelect.empty();
+        
+        if (!cityId) return;
+        
+        // Показываем загрузку
+        $districtSelect.prop('disabled', true);
+
+
+        $.ajax({
+              headers: {
+                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              type: 'GET',
+              url: `/admin/districts/city/${cityId}`,
+              processData: false,
+              contentType: false  
+          }).done(function (districts) {
+              districts.forEach(district => {
+                $districtSelect.append(`<option value="${district.id}">${district.name}</option>`);
+            });
+            $districtSelect.prop('disabled', false);
+          }).fail(function () {
+              Swal.fire(
+                  'Ошибка!',
+                  'Неизвестная ошибка',
+                  'error'
+              )
+          });
+    });
+});
 </script>
 
 
@@ -342,7 +452,7 @@
 });
 </script>
 
-{{-- <script>
+<script>
     document.querySelector('form').addEventListener('submit', function(e) {
         if($('.show-schedule-form-js').is(':checked')){
             let isValid = true;
@@ -367,7 +477,7 @@
         }
         }
     });
-    </script> --}}
+    </script>
 
     <script type="module">
         $('.closed-schedule-chkbox-js').click(function() {
@@ -449,6 +559,93 @@
                 hiddenInput.name = `images[${index}]`;
             }
         });
+    }
+</script>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        ymaps.ready(initMap);
+    });
+
+    function initMap() {
+        const map = new ymaps.Map('map', {
+            center: [{{ $place->latitude }}, {{ $place->longitude }}], // Москва по умолчанию
+            zoom: 10
+        });
+
+        const placemark = new ymaps.Placemark(map.getCenter(), {}, {
+            draggable: true,
+            preset: 'islands#redDotIcon'
+        });
+
+        map.geoObjects.add(placemark);
+
+        // Функция обновления координат
+        function updateCoordinates(coords) {
+            placemark.geometry.setCoordinates(coords);
+            map.setCenter(coords, 15);
+            document.getElementById('latitude').value = coords[0];
+            document.getElementById('longitude').value = coords[1];
+        }
+
+        // Обработка перемещения метки
+        placemark.events.add('dragend', function(e) {
+            const coords = placemark.geometry.getCoordinates();
+            updateCoordinates(coords);
+            // Дополнительно можно получить адрес по координатам
+            getAddressByCoords(coords);
+        });
+
+        // Обработка клика по карте
+        map.events.add('click', function(e) {
+            const coords = e.get('coords');
+            updateCoordinates(coords);
+            getAddressByCoords(coords);
+        });
+
+        // Поиск адреса
+        document.getElementById('search-address').addEventListener('click', function() {
+            const address = document.getElementById('address').value;
+            
+            ymaps.geocode(address, {
+                results: 1
+            }).then(function(res) {
+                const firstGeoObject = res.geoObjects.get(0);
+                if (firstGeoObject) {
+                    const coords = firstGeoObject.geometry.getCoordinates();
+                    updateCoordinates(coords);
+                    
+                    // Обновляем поле адреса точным значением от Яндекса
+                    document.getElementById('address').value = firstGeoObject.getAddressLine();
+                } else {
+                    alert('Адрес не найден');
+                }
+            }).catch(function(error) {
+                alert('Ошибка при поиске адреса: ' + error);
+            });
+        });
+
+        // Функция получения адреса по координатам (опционально)
+        function getAddressByCoords(coords) {
+            ymaps.geocode(coords).then(function(res) {
+                const firstGeoObject = res.geoObjects.get(0);
+                if (firstGeoObject) {
+                    document.getElementById('address').value = firstGeoObject.getAddressLine();
+                }
+            });
+        }
+
+        // Если есть сохраненные координаты
+        @if(isset($place) && $place->latitude && $place->longitude)
+            const savedCoords = [{{ $place->latitude }}, {{ $place->longitude }}];
+            updateCoordinates(savedCoords);
+            getAddressByCoords(savedCoords);
+            
+            // Если есть сохраненный адрес
+            @if(isset($place->address))
+                document.getElementById('address').value = '{{ $place->address }}';
+            @endif
+        @endif
     }
 </script>
 

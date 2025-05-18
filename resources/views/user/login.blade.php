@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@section('title', 'Вход в аккаунт - MinGo')
+@section('canonical', 'https://mingonow.ru/login')
+@section('ogTitle', 'Вход в аккаунт - MinGo')
+
 @section('title', 'Home')
 
 @section('content')
@@ -50,9 +54,16 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Пароль</label>
                     <div class="password-input-wrapper">
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Создайте пароль" value="{{old('password')}}" required>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Пароль" value="" required>
                         <i class="fas fa-eye password-toggle-icon" id="togglePassword"></i>
                     </div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input name="remember" class="form-check-input auth-page__remember-me" type="checkbox" id="remember">
+                    <label class="form-check-label" for="remember">
+                        Запомнить меня
+                    </label>
                 </div>
 
                 @if ($errors->any())

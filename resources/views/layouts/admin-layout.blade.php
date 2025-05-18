@@ -9,6 +9,8 @@
     <title>@yield('title', 'Title не указан')</title>
     @vite(['resources/js/app.js', 'resources/libs/bootstrap/bootstrap.bundle.js', 'resources/libs/bootstrap/bootstrap.css', 'resources/libs/fontawesome/css/all.css', 'resources/css/admin.css', 'resources/js/admin.js'])
     <script src="/libs/tinymce/tinymce.min.js"></script>
+    <link rel="stylesheet" href="/libs/swal/dist/sweetalert2.min.css">
+    <script src="/libs/swal/dist/sweetalert2.min.js"></script>
 </head>
 <body>
 <div id="bfwrap">
@@ -57,6 +59,32 @@
                         </li>
                         <li>
                             <a href="{{route('admin.kitchens.add')}}">Добавить кухню</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="bf-first-item js-menu bf-first-item-li bf-has-submenu bf-not-current-submenu menu-top menu-top-first">
+                    <a href="{{route('admin.cities')}}" class="bf-has-submenu bf-first-item-link bf-not-current-submenu menu-top">
+                        <div class="bf-menu-name"><i class="fa-solid fa-image mx-2"></i>Города</div>
+                    </a>
+                    <ul class="bf-submenu bf-submenu-wrap">
+                        <li>
+                            <a href="{{route('admin.cities')}}">Все города</a>
+                        </li>
+                        <li>
+                            <a href="{{route('admin.cities.add')}}">Добавить город</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="bf-first-item js-menu bf-first-item-li bf-has-submenu bf-not-current-submenu menu-top menu-top-first">
+                    <a href="{{route('admin.districts')}}" class="bf-has-submenu bf-first-item-link bf-not-current-submenu menu-top">
+                        <div class="bf-menu-name"><i class="fa-solid fa-image mx-2"></i>Районы</div>
+                    </a>
+                    <ul class="bf-submenu bf-submenu-wrap">
+                        <li>
+                            <a href="{{route('admin.districts')}}">Все районы</a>
+                        </li>
+                        <li>
+                            <a href="{{route('admin.districts.add')}}">Добавить район</a>
                         </li>
                     </ul>
                 </li>
@@ -159,7 +187,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/"><i class="fa-solid fa-home mx-1"></i>BigFog</a>
+                    <a href="/"><i class="fa-solid fa-home mx-1"></i>MinGO</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa-solid fa-plus mx-1"></i>Добавить</a>

@@ -1,4 +1,48 @@
+
 document.addEventListener("DOMContentLoaded", function () {
+
+    $('.copy-btn-js').click(function(e){
+       let copyText = this.dataset.copyText;
+        const textarea = document.createElement('textarea');
+        textarea.value = copyText;
+        document.body.appendChild(textarea);
+        
+        // Выделяем и копируем текст
+        textarea.select();
+        document.execCommand('copy');
+        
+        // Удаляем временный элемент
+        document.body.removeChild(textarea);
+        showNotification('success', 'Успешно!', 'Ссылка успешно скопирована!');
+    });
+
+    let headerBurger = document.querySelector('.header__burger-js');
+    if (headerBurger != null) {
+        document.querySelector('.header__burger-js').addEventListener('click', function () {
+
+            if (document.querySelector('.header__mobile-menu-js').classList.contains('active')) {
+                // document.getElementsByTagName('body')[0].style.cssText = 'overflow-y: auto;';
+                document.querySelector('.header__mobile-menu-js').classList.remove('active');
+                document.querySelector('.header__burger-js').classList.remove('active');
+    
+            }
+            else {
+                // document.getElementsByTagName('body')[0].style.cssText = 'overflow-y: hidden;';
+                document.querySelector('.header__mobile-menu-js').classList.add('active');
+                document.querySelector('.header__burger-js').classList.add('active');
+            }
+
+        })
+    }
+
+    let headerCloseBtn = document.querySelector('.header__mobile-close-btn-js');
+    if(headerCloseBtn != null){
+        headerCloseBtn.addEventListener('click', function () {
+            document.querySelector('.header__mobile-menu-js').classList.remove('active');
+            document.querySelector('.header__burger-js').classList.remove('active');          
+
+        })
+    }
 
     //Показ и скрытие пароля
 
