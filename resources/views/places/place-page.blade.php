@@ -10,7 +10,6 @@
 @section('content')
 
 <link rel="stylesheet" href="/libs/swal/dist/sweetalert2.min.css">
-<script src="/libs/swal/dist/sweetalert2.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/jquery-expander@1.7.0/jquery.expander.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
 <script src="https://api-maps.yandex.ru/2.1/?apikey=5f0a3b1e-fbda-49de-8aaf-b1e7e50de135&lang=ru_RU" type="text/javascript"></script>
@@ -296,5 +295,6 @@ $('.place-page__shedule').on('click', function() {
 });
 </script>
 
+<script src="/libs/swal/dist/sweetalert2.min.js"></script>
 
 @endsection

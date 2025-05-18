@@ -17,7 +17,7 @@
 	<link rel="canonical" href="@yield('canonical', '')" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;700&display=swap" rel="stylesheet">
-	@vite(['resources/js/app.js', 'resources/css/app.css', 'resources/libs/bootstrap/bootstrap.bundle.js', 'resources/js/script.js', 'resources/libs/bootstrap/bootstrap.css', 'resources/css/main.css'])
+	@vite(['resources/js/app.js', 'resources/css/app.css', 'resources/js/script.js', 'resources/libs/bootstrap/bootstrap.css', 'resources/css/main.css'])
 </head>
 <body>
     <!-- Шапка сайта -->
@@ -228,5 +228,6 @@
         </div>
     </footer>
     @stack('scripts')
+    <script src="/libs/bootstrap/bootstrap.bundle.js"></script>
 </body>
 </html>
