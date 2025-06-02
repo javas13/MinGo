@@ -97,6 +97,18 @@
         <input name="name" type="text" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Название" value="{{old('name')}}">
     </div>
     <div class="mb-3">
+        <label for="category" class="form-label">Категория*</label>
+        <select id="category" name="category_id" class="form-select" aria-label="Default select example">
+            @foreach($categories as $category)
+            @if ($loop->first)
+                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}selected>{{ $category->name }}</option>
+            @else
+                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+            @endif
+            @endforeach
+        </select>
+    </div>
+    <div class="mb-3">
         <label for="average_bill" class="form-label">Средний чек</label>
         <input name="average_bill" type="number" class="form-control" id="average_bill" placeholder="Средний чек" value="{{old('average_bill')}}">
     </div>
@@ -131,18 +143,6 @@
     <div class="mb-3  @error('description') border border-danger @enderror">
         <label class="form-label @error('description') text-danger fw-bold @enderror" for="content">Описание*</label>
         <textarea class="" name="description" id="content">{{old('description')}}</textarea>
-    </div>
-    <div class="mb-3">
-        <label for="category" class="form-label">Категория*</label>
-        <select id="category" name="category_id" class="form-select" aria-label="Default select example">
-            @foreach($categories as $category)
-            @if ($loop->first)
-                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}selected>{{ $category->name }}</option>
-            @else
-                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-            @endif
-            @endforeach
-        </select>
     </div>
     <div class="mb-3 d-flex flex-column">
         <label class="form-label">Данные для картинга</label>
@@ -288,7 +288,7 @@
                 @foreach (App\Models\Place::ATMOSPHERE_ANSWERS as $key => $label)
                     <div class="form-check">
                         <input
-                            type="checkbox"
+                            type="radio"
                             name="atmosphere[]"
                             value="{{ $key }}"
                             id="atmosphere_{{ $key }}"

@@ -61,14 +61,14 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="profile-settings-page__user-name">{{ $user->name }}</div>
+                    <div class="profile-settings-page__user-name profile-name-js">{{ $user->name }}</div>
                     <div>Дата регистрации: {{ $user->created_at->format('d.m.Y') }}</div>
                 </div>
                 </div>
                 <div class="profile-settings-page__input-list">
                     <div>
                         <label for="name" class="form-label">Имя</label>
-                        <input type="text" class="form-control beaty-input @error('name') is-invalid @enderror" id="name" name="name" placeholder="Имя" value="{{old('name', $user->name)}}" required>
+                        <input type="text" data-field="name"  data-url="{{ route('profile.auto-update') }}" class="auto-update-field-js form-control beaty-input @error('name') is-invalid @enderror" id="name" name="name" placeholder="Имя" value="{{old('name', $user->name)}}" required>
                     </div>
                     <div>
                         <label for="email" class="form-label">Email</label>
@@ -80,6 +80,62 @@
         
     </div>
 </div>
+
+<div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="loading-text mt-3">Обновляем данные...</p>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.auto-update-field-js').forEach(input => {
+    input.dataset.originalValue = input.value;
+    input.addEventListener('blur', async function() {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const field = this.dataset.field;
+        const url = this.dataset.url;
+        const value = this.value;
+        const originalValue = this.dataset.originalValue;
+
+        if (value === originalValue) {
+            return;
+        }
+
+        loadingOverlay.style.display = 'flex';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ field, value }),
+            });
+
+            const data = await response.json();
+
+            document.querySelector('.profile-name-js').innerHTML = value;
+            
+            if (response.ok) {
+                // Обновляем originalValue на новое, чтобы при повторном blur не отправлять запрос
+                this.dataset.originalValue = value;
+            } else {
+                this.value = originalValue; // Откатываем значение
+                console.error('Ошибка:', data.message);
+            }
+        } catch (error) {
+            this.value = originalValue;
+            console.error('Ошибка сети:', error);
+        } finally {
+            loadingOverlay.style.display = 'none';
+        }
+    });
+});
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

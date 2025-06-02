@@ -16,6 +16,29 @@ document.addEventListener("DOMContentLoaded", function () {
         showNotification('success', 'Успешно!', 'Ссылка успешно скопирована!');
     });
 
+    $('.window-open-trigger-js').click(function(e){
+        let windowId = this.dataset.forWindowId;
+        let dataText = '[data-window-id="' + windowId + '"]';
+        let windowToOpen = $(dataText);
+        windowToOpen.addClass('active');
+    });
+
+    $('.filters-window__wrapper').click(function(e) {
+        if ($(e.target).hasClass('filters-window__wrapper')) {
+            $(this).removeClass('active');
+        }
+    });
+    
+    // Закрытие при клике на кнопку закрытия
+    $('.filters-window__close-btn-js').click(function() {
+        let windowId = this.dataset.forWindowId;
+        let dataText = '[data-window-id="' + windowId + '"]';
+        let windowToOpen = $(dataText);
+        windowToOpen.removeClass('active');
+    });
+    
+
+
     let headerBurger = document.querySelector('.header__burger-js');
     if (headerBurger != null) {
         document.querySelector('.header__burger-js').addEventListener('click', function () {

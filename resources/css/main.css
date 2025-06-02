@@ -932,6 +932,7 @@ body:not(.modal-open) {
 	transition: all 0.3s;
 	height: 100%;
 	box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+	position: relative;
 }
 
 .place-card:hover {
@@ -943,7 +944,6 @@ body:not(.modal-open) {
 	height: 250px;
 	width: 100%;
 	object-fit: cover;
-	border-radius: 15px 15px 0 0;
 }
 
 .place-body {
@@ -963,8 +963,13 @@ body:not(.modal-open) {
 
 .place-price {
 	display: flex;
+	margin-bottom: 5px;
+}
+
+.place-card__atmosphere{
 	flex: 1 1 auto;
-	margin-bottom: 10px;
+	line-height: 1;
+	font-size: 14px;
 }
 
 .place-card__category-row{
@@ -1019,6 +1024,30 @@ body:not(.modal-open) {
     font-size: 13px;
 }
 
+.place-card-promoted{
+	border: 3px solid var(--primary-color);
+	box-shadow: 1px 2px 20px 1px rgb(3 255 158 / 70%);
+}
+
+.place-card-promoted:hover{
+	box-shadow: 0px 14px 20px 1px rgb(3 255 158 / 70%);
+}
+
+.place-card__promo-badge{
+	background-color: var(--primary-color);
+	color: #fff;
+	font-weight: 700;
+	border-radius: 20px;
+	position: absolute;
+	z-index: 2;
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	top: 10px;
+	left: 10px;
+}
+
 .price-icon {
 	color: var(--primary-color);
 	margin-right: 5px;
@@ -1027,13 +1056,16 @@ body:not(.modal-open) {
 .place-address {
 	color: #666;
 	font-size: 0.9rem;
-	margin-bottom: 15px;
+	margin-bottom: 0px;
+	line-height: 1.2;
+	margin-top: 8px;
 }
+
 
 .favorite-btn {
 	position: absolute;
-	top: 20px;
-	right: 20px;
+	top: 10px;
+	right: 10px;
 	background: white;
 	border: none;
 	width: 40px;
@@ -1164,6 +1196,185 @@ body:not(.modal-open) {
 	color: #fff;
     padding: 10px 15px;
     font-weight: 500;
+}
+
+.places-results-page__btn-cont{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.filters-btn{
+	width: 170px!important;
+	background-color: #285d9e;
+    border: none;
+    height: 50px;
+    border-radius: 12px;
+    font-weight: 600;
+    width: 100%;
+	color: #fff;
+    transition: all 0.3s;
+}
+
+.filters-btn:hover{
+	background-color: #264f81;
+}
+
+.filters-window__wrapper{
+	position: fixed;
+	display: none;
+	top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    flex-direction: row;
+	align-items: baseline;
+	justify-content: center;
+	background-color: transparent;
+	padding: 10px;
+	z-index: 1060;
+    overflow-x: hidden;
+	transition: background-color .1s;
+}
+
+.price-inputs {
+	display: flex;
+	gap: 15px;
+	margin-bottom: 20px;
+}
+.price-input {
+	flex: 1;
+}
+.filter-accordion-item{
+	background-color: #fff0;
+    border: none;
+    border-bottom: 1px #D9D9D9 solid;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+.filter-accordion-button{
+	font-size: 18px;
+    font-weight: 700;
+	padding: 11px 3px;
+	background-color: transparent !important;
+}
+.filter-accordion-button:focus {
+    z-index: 3;
+    border-color: #f0f0eb;
+    outline: 0;
+    box-shadow: none;
+}
+.filter-accordion-body{
+	font-size: 16px;
+    font-weight: 400;
+    color: #000;
+    padding-left: 5px;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+}
+.filter-accordion-button:not(.collapsed){
+	color: #000!important;
+	box-shadow: none;
+}
+.green-checkbox{
+	height: 21px;
+    width: 21px;
+    border-radius: 5px;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #d9d9d9;
+    cursor: pointer;
+    flex: 0 0 auto;
+    transition: all .2s ease-in-out;
+}
+.green-checkbox:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: none;
+    border: var(--primary-color);
+}
+.noUi-handle{
+	cursor: pointer!important;
+}
+.noUi-connect{
+	background: var(--primary-color)!important;
+}
+.slider-container {
+	padding: 0 15px;
+	margin-bottom: 40px;
+}
+.noUi-connect {
+	background: #0d6efd;
+}
+
+.filters-window__wrapper.active{
+	background-color: rgba(0, 0, 0, .4);
+	display: flex;
+}
+
+.filters-window{
+	display: none;
+	position: relative;
+    flex-direction: column;
+    justify-content: center;
+    width: 40em;
+    max-width: 100%;
+    padding: 1.25em;
+    border-radius: .3125em;
+    background: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.filters-window__wrapper.active .filters-window{
+	display: flex;
+	animation: window-show-anim .3s;
+}
+
+@keyframes window-show-anim{
+	0% {
+		-webkit-transform: scale(.7);
+		transform: scale(.7);
+	}
+
+	45% {
+		-webkit-transform: scale(1.05);
+		transform: scale(1.05);
+	}
+	80% {
+		-webkit-transform: scale(.95);
+		transform: scale(.95);
+	}
+	100% {
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+}
+
+.filters-window__close-btn{
+	position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+}
+
+.filters-window__close-btn img {
+	height: 35px;
+	width: 35px;
+}
+
+.filters-window__content{
+	margin-top: 25px;
+}
+
+.filters-window__title{
+	font-size: 22px;
+	font-weight: 700;
+	padding-right: 40px;
+	line-height: 1;
 }
 
 /* СТРАНИЦА РЕЗУЛЬТАТЫ КВИЗА КОНЕЦ*/
@@ -1340,18 +1551,9 @@ body:not(.modal-open) {
 	color: #c5c5c5;
 }
 
-/* .place-page__top-cover{
-	position: absolute;
-    height: 100%;
-    width: 100%;
-    border-radius: 25px;
-    top: 0;
-    left: 0;
-    background: linear-gradient(135deg, #27ae60, #2ecc71, #1abc9c);
-    box-shadow: 0 0 20px rgba(39, 174, 96, 0.5);
-    filter: blur(1px);
-    z-index: -2;
-} */
+.place-page__atmosphere{
+	color: #fff;
+}
 
 
 .place-page__top-cover-wrapper{
@@ -2011,6 +2213,28 @@ body:not(.modal-open) {
 
 }
 
+@media (max-width: 767px){
+	.places-results-page__btn-cont {
+		flex-direction: column;
+	}
+
+	.filters-btn{
+		width: 100%!important;
+	}
+
+	.places-results-page__copy-btn {
+    	width: 50%;
+	}
+
+	.place-address{
+		font-size: 13px;
+	}
+
+	.place-card__atmosphere {
+    font-size: 13px;
+}
+}
+
 @media (max-width: 575px) {
     .places-container {
 		padding: 40px 10px;
@@ -2031,11 +2255,11 @@ body:not(.modal-open) {
 	}
 
 	.place-results-list {
-        grid-gap: 10px 10px;
+        grid-gap: 8px 8px;
     }
 
 	.place-body {
-		padding: 15px;
+		padding: 12px;
 	}
 
 	.place-image {
@@ -2072,6 +2296,11 @@ body:not(.modal-open) {
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
+	}
+
+	.place-card__promo-badge {
+		font-size: 12px;
+		left: 5px;
 	}
 }
 

@@ -14,6 +14,8 @@ use App\Models\Faq;
 use App\Models\Banner;
 use App\Models\Kitchen;
 use App\Models\City;
+use App\Models\AdvertisingTypes;
+use App\Models\AdvertisingCampaign;
 use App\Models\PlaceKitchen;
 use App\Models\Staff;
 use App\Models\NewsletterSubscription;
@@ -804,8 +806,7 @@ class AdminController extends Controller
         $placeSlug = Str::slug($placeCopy->name).'-'.$placeCopy->id;
         $placeCopy->slug = $placeSlug;
         $placeCopy->save();
-
-        foreach(Schedule::where('place_id', $place->id) as $elem){
+        foreach(Schedule::where('place_id', $place->id)->get() as $elem){
             $schedule = new Schedule();
             $schedule->place_id = $placeCopy->id;
             $schedule->day_of_week = $elem->day_of_week;
@@ -815,14 +816,14 @@ class AdminController extends Controller
             $schedule->save();
         }
 
-        foreach(PlaceKitchen::where('place_id', $place->id) as $elem){
+        foreach(PlaceKitchen::where('place_id', $place->id)->get() as $elem){
             $placeKitchen = new PlaceKitchen();
             $placeKitchen->place_id = $placeCopy->id;
             $placeKitchen->kitchen_id = $elem->kitchen_id;
             $placeKitchen->save();
         }
 
-        foreach(PlaceImage::where('place_id', $place->id) as $elem){
+        foreach(PlaceImage::where('place_id', $place->id)->get() as $elem){
             $placeImage = new PlaceImage();
             $placeImage->place_id = $placeCopy->id;
             $placeImage->image_src = $elem->image_src;
@@ -1045,6 +1046,68 @@ class AdminController extends Controller
     public function byCity(City $city)
     {
         return $city->districts;
+    }
+
+    public function advertsAddStore(Request $request){
+        $request->validate([
+            'place_id' => ['required'],
+            'type_id' => ['required'],
+            'starts_at' => ['required'],
+            'ends_at' => ['required'],
+        ]);
+        $advertCamaign = new AdvertisingCampaign();
+        $placeToAdvert = Place::find($request->input('place_id'));
+        if($placeToAdvert == null){
+            return  back()->withErrors([
+                'error' => 'Такого места не существует',
+            ]);
+        }
+        else{
+            $advertCamaign->place_id  = $request->input('place_id');
+            $advertCamaign->type_id = $request->input('type_id');
+            $advertCamaign->starts_at = $request->input('starts_at');
+            $advertCamaign->ends_at = $request->input('ends_at');
+
+            $advertCamaign->save();
+
+            return redirect()->route('admin.adverts');
+        }
+    }
+
+    public function advertsUpdate($id){
+        return View('admin.adverts.adverts-update', ['advertsTypes' => AdvertisingTypes::all(), 'advert' => AdvertisingCampaign::find($id)]);
+    }
+
+    public function advertsUpdateStore($id, Request $request){
+        $request->validate([
+            'place_id' => ['required'],
+            'type_id' => ['required'],
+            'starts_at' => ['required'],
+            'ends_at' => ['required'],
+        ]);
+        $advertCamaign = AdvertisingCampaign::find($id);
+        $placeToAdvert = Place::find($request->input('place_id'));
+        if($placeToAdvert == null){
+            return  back()->withErrors([
+                'error' => 'Такого места не существует',
+            ]);
+        }
+        else{
+            $advertCamaign->place_id  = $request->input('place_id');
+            $advertCamaign->type_id = $request->input('type_id');
+            $advertCamaign->starts_at = $request->input('starts_at');
+            $advertCamaign->ends_at = $request->input('ends_at');
+
+            $advertCamaign->save();
+
+            return redirect()->route('admin.adverts');
+        }
+    }
+
+    public function advertsDelete(AdvertisingCampaign $advertisingCampaign){
+        $advertisingCampaign->delete();
+
+        return redirect()->route('admin.adverts');
     }
 
 

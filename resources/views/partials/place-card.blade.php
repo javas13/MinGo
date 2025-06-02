@@ -1,5 +1,6 @@
 <div class="">
-    <div class="place-card">
+    <div class="place-card @if($place->activeAdvertisingTopListCampaigns->isNotEmpty()) place-card-promoted @endif">
+        @if($place->activeAdvertisingTopListCampaigns->isNotEmpty()) <div class="place-card__promo-badge">Рекоммендуем</div> @endif
         <a target="_blank" class="place-image-box" href="{{ route('places.elem', $place->slug) }}" >
             <img src="@if($place->thumb_image_src == null) /img/admin/no-image.png @else {{ $place->thumb_image_src }} @endif" class="place-image" alt="Ресторан">
             @auth
@@ -30,6 +31,13 @@
                     </div>
                     @endif
                 </div>
+            </div>
+            <div class="place-card__atmosphere">
+                @if($place->atmosphere_text == 'Тихое место')
+                <i class="fas fa-volume-mute"></i> {{ $place->atmosphere_text; }}
+                @else
+                <i class="fas fa-volume-up"></i> {{ $place->atmosphere_text; }}
+                @endif
             </div>
             <p class="place-address">
                 <i class="fas fa-map-marker-alt"></i>

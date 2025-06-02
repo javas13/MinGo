@@ -59,6 +59,13 @@
                         </div>
                         @endif
                     </div>
+                    <div class="place-page__atmosphere">
+                        @if($place->atmosphere_text == 'Тихое место')
+                        <i class="fas fa-volume-mute"></i> {{ $place->atmosphere_text; }}
+                        @else
+                        <i class="fas fa-volume-up"></i> {{ $place->atmosphere_text; }}
+                        @endif
+                    </div>
                     <div class="place-page__address">{{ $place->address }}</div>
                     @if($place->is_schedule_active == true)
                     <div class="position-relative place-page__shedule-wrap">
@@ -104,8 +111,8 @@
             @endif
         </div>
         @endif
-
-        <div class="place-page__kitchen-block place-page__block-space place-page__block-max-width">
+        @if($place->kitchens->count() != 0)
+            <div class="place-page__kitchen-block place-page__block-space place-page__block-max-width">
             <h2 class="place-page_h2">Кухня</h2>
             <div class="place-page__kitchen-row">
                 @foreach($place->kitchens as $kitchen)
@@ -113,6 +120,7 @@
                 @endforeach
             </div>
         </div>
+        @endif
         <div class="place-page__map-block place-page__block-space">
             <h2 class="place-page_h2">Адрес</h2>
             <div class="mb-2">{{ $place->address }}</div>

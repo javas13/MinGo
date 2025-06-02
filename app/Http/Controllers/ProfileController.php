@@ -17,6 +17,19 @@ class ProfileController extends Controller
         return View('profile.index', ['breads' => $mas, 'user' => $user]);
     }
 
+    public function autoUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'field' => 'required|string|in:name', // Разрешенные поля
+            'value' => 'required|string|max:255',          // Правила валидации
+        ]);
+
+        $user = auth()->user();
+        $user->update([$validated['field'] => $validated['value']]);
+
+        return response()->json(['message' => 'Данные обновлены!']);
+    }
+
 
 
 

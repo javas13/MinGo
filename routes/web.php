@@ -9,8 +9,11 @@ use App\Models\Faq;
 use App\Models\City;
 use App\Models\District;
 use App\Models\Kitchen;
+use App\Models\PlaceKitchen;
 use App\Models\Place;
 use App\Models\Staff;
+use App\Models\AdvertisingTypes;
+use App\Models\AdvertisingCampaign;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NewsController;
@@ -61,7 +64,7 @@ Route::get('contacts', function () {
     return view('contacts', ['breads' => $mas]);
 })->name('contacts');
 
-Route::get('/kviz-results/{key}', function ($key) {
+Route::get('/kviz-results/{key}', function (Request $request, $key) {
     $mas = array();
 	$mas[] = array('title' => 'Главная', 'link' => '/');
 	$mas[] = array('title' => 'Результаты квиза', 'link' => '/');
@@ -75,9 +78,46 @@ Route::get('/kviz-results/{key}', function ($key) {
     
     $placesIds = Cache::get($cacheKey);
 
-    $places = Place::whereIn('id', $placesIds)->paginate(24);
+    $query = Place::select('id', 'name', 'category_id', 'image_src', 'thumb_image_src', 'address', 	'is_active', 'slug', 'city_id', 'district_id', 'average_bill')->whereIn('id', $placesIds);
 
-    return View('kviz.results', ['places' => $places, 'breads' => $mas]);  
+    if(isset($request['kitchens'])){
+        $placesIds = PlaceKitchen::select('place_id')->whereIn('kitchen_id', $request['kitchens'])->groupBy('place_id')->get();
+        $query->whereIn('id', $placesIds);
+    }
+
+    if(isset($request['districts'])){
+        $query->whereIn('district_id', $request['districts']);
+    }
+
+    if(isset($request['budjet-min'])){
+        $query->where('average_bill', '>=', $request['budjet-min']);
+    }
+
+    if(isset($request['budjet-max'])){
+        $query->where('average_bill', '<=', $request['budjet-max']);
+    }
+
+    $places = Place::query()
+    ->leftJoin('advertising_campaigns', function ($join) {
+        $now = now();
+        $join->on('places.id', '=', 'advertising_campaigns.place_id')
+             ->where('advertising_campaigns.starts_at', '<=', $now)
+             ->where('advertising_campaigns.ends_at', '>=', $now)
+             ->where('advertising_campaigns.type_id', 1); // например, только для типа 1
+    })
+    ->select('places.*')
+    ->orderByRaw('CASE WHEN advertising_campaigns.id IS NOT NULL THEN 0 ELSE 1 END')
+    ->orderBy('places.name')
+    ->paginate(24);
+
+    // $places = $query->paginate(24);
+
+    // $places = Place::whereIn('id', $placesIds)->paginate(24);
+    $currentCity = City::where('name', 'Москва')->firstOrFail();
+    $districts = District::where('city_id', $currentCity->id)->get();
+    $kitchens = Kitchen::all();
+
+    return View('kviz.results', ['places' => $places, 'breads' => $mas, 'districts' => $districts, 'kitchens' => $kitchens, 'key' => $key]);  
 })->name('temporary.results');
 
 Route::get('/places/{slug}', [PlaceController::class, 'placePage'])->name('places.elem');
@@ -253,6 +293,22 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/districts/city/{city}', [AdminController::class, 'byCity'])->name('districts.by-city')->middleware('admin');
 
+    Route::get('adverts', function (){
+        return view('admin.adverts.adverts-list', ['adverts' => AdvertisingCampaign::all()]);
+    })->name('admin.adverts')->middleware('admin');
+
+    Route::get('adverts/add', function (){
+        return view('admin.adverts.adverts-add', ['advertsTypes' => AdvertisingTypes::all()]);
+    })->name('admin.adverts.add')->middleware('admin');
+
+    Route::post('adverts/add', [AdminController::class, 'advertsAddStore'])->name('admin.adverts.add.store')->middleware('admin');
+
+    Route::get('adverts/{id}/update', [AdminController::class, 'advertsUpdate'])->name('admin.adverts.update')->middleware('admin');
+
+    Route::post('adverts/{id}/update', [AdminController::class, 'advertsUpdateStore'])->name('admin.adverts.update.store')->middleware('admin');
+
+    Route::delete('adverts/{advertisingCampaign}/delete', [AdminController::class, 'advertsDelete'])->name('admin.adverts.delete')->middleware('admin');
+
 });
 
 Route::middleware('guest')->group(function () {
@@ -278,6 +334,9 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth', 'verified')->group(function (){
 
     Route::get('profile/settings', [ProfileController::class, 'index'])->name('profile');
+
+    Route::post('/profile/auto-update', [ProfileController::class, 'autoUpdate'])
+    ->name('profile.auto-update');
 
 });
 

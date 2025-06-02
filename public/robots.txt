@@ -6,4 +6,5 @@ Disallow: /forgot-password
 Disallow: /profile/settings
 Disallow: /favorites
 Disallow: /kviz-results
+Disallow: /reset-password
 Sitemap: https://mingonow.ru/sitemap.xml

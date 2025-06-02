@@ -22,6 +22,8 @@ class Place extends Model
         return $this->hasMany(AttributeValue::class);
     }
 
+    protected $appends = ['atmosphere_text'];
+
     public function schedules()
     {
         return $this->hasMany(Schedule::class)->orderBy('day_of_week');
@@ -134,7 +136,6 @@ class Place extends Model
     const ATMOSPHERE_ANSWERS = [
         'quiet' => 'Тихое место',
         'noisy' => 'Шумное место',
-        'any' => 'Без разницы',
     ];
 
     public function favoritedBy()
@@ -147,6 +148,29 @@ class Place extends Model
     {
         $this->attributes['phone_formatted'] = $value;
         $this->attributes['phone_numeric'] = preg_replace('/[^0-9]/', '', $value);
+    }
+
+    public function activeAdvertisingTopListCampaigns()
+    {
+        return $this->hasMany(AdvertisingCampaign::class)
+            ->where('starts_at', '<=', now())
+            ->where('ends_at', '>=', now())
+            ->where('type_id', 1);
+    }
+
+    public function getAtmosphereTextAttribute(): string
+    {
+       $value = $this->atmosphere; // Это массив из-за casts
+    
+        // Если atmosphere хранит массив с одним элементом (например, ['quiet'])
+        if (is_array($value)) {
+            // Берем первый элемент массива
+            $key = reset($value);
+            return self::ATMOSPHERE_ANSWERS[$key] ?? $key;
+        }
+        
+        // Если вдруг atmosphere не массив (хотя casts настроен)
+        return self::ATMOSPHERE_ANSWERS[$value] ?? $value;
     }
 
 
