@@ -79,6 +79,8 @@ header{
 		box-shadow: 20px 0px 20px 1px rgba(0, 0, 0, 0.1);
 }
 
+
+
 .header__mobile-mail{
 	
 }
@@ -150,6 +152,10 @@ header{
 
 .page-content{
 	min-height: 100vh;
+}
+
+.welcome-title{
+	font-size: 2.8rem;
 }
 
 .page-title{
@@ -505,6 +511,11 @@ header{
 footer {
 	font-family: 'Commissioner', sans-serif;
 	box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.footer__insta-alert{
+	margin-top: 10px;
+	font-size: 12px;
 }
 
 footer h5 {
@@ -963,7 +974,6 @@ body:not(.modal-open) {
 
 .place-price {
 	display: flex;
-	margin-bottom: 5px;
 }
 
 .place-card__atmosphere{
@@ -1552,6 +1562,10 @@ body:not(.modal-open) {
 }
 
 .place-page__atmosphere{
+	color: #fff;
+}
+
+.place-page__place-price-second{
 	color: #fff;
 }
 
@@ -2209,7 +2223,9 @@ body:not(.modal-open) {
 		min-width: none;
    }
 
-
+   .welcome-title{
+	font-size: 1.8rem;
+   }
 
 }
 

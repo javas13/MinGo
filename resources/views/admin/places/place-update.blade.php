@@ -290,7 +290,7 @@
                 @foreach (App\Models\Place::ATMOSPHERE_ANSWERS as $key => $label)
                     <div class="form-check">
                         <input
-                            type="radio"
+                            type="checkbox"
                             name="atmosphere[]"
                             value="{{ $key }}"
                             id="atmosphere_{{ $key }}"

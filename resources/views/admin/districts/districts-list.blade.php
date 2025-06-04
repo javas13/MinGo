@@ -7,7 +7,7 @@
 
 
 <div class="d-flex align-items-center mb-5">
-    <h1>Список районов</h1>
+    <h1>Список округов</h1>
     <a href="{{ route('admin.districts.add') }}" class="btn btn-primary ms-2">Добавить</a>
 </div>
 

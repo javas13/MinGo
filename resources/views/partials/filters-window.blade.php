@@ -27,7 +27,7 @@
 				<div class="accordion-item filter-accordion-item">
 					<h2 class="accordion-header">
 					<button class="accordion-button filter-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-						Район
+						Округа
 					</button>
 					</h2>
 					<div id="collapseTwo" class="accordion-collapse collapse">

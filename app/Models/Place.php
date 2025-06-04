@@ -136,6 +136,7 @@ class Place extends Model
     const ATMOSPHERE_ANSWERS = [
         'quiet' => 'Тихое место',
         'noisy' => 'Шумное место',
+        // 'any' => 'Без разницы',
     ];
 
     public function favoritedBy()

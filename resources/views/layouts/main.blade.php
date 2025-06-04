@@ -169,6 +169,9 @@
                         <a href="#" target="_blank" rel="nofollow" class="text-secondary me-3"><i class="fab fa-vk fa-lg"></i></a>
                         <a href="#" target="_blank" rel="nofollow" class="text-secondary me-3"><i class="fab fa-instagram fa-lg"></i></a>
                     </div>
+                    <div class="footer__insta-alert">
+                        * Meta - признана экстремистской организацией в РФ.
+                    </div>
                 </div>
     
                 <!-- Колонка с пользовательскими ссылками -->
@@ -219,7 +222,7 @@
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <span class="text-muted mb-2 mb-md-0">© 2025 MinGo. Все права защищены</span>
                     <div>
-                        <a href="#" class="text-decoration-none text-dark">
+                        <a href="/policy.pdf" class="text-decoration-none text-dark">
                             <i class="fas fa-file-contract me-2"></i>Политика конфиденциальности
                         </a>
                     </div>

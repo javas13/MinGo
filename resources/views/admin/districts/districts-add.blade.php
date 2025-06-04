@@ -5,7 +5,7 @@
 @section('content')
 
 <div class="d-flex align-items-center">
-    <h1>Добавить Район</h1>
+    <h1>Добавить Округ</h1>
 </div>
 
 <form id="article_form" class="mt-4" action="{{route ('admin.districts.add.store')}}" method="post">
@@ -20,8 +20,8 @@
         </div>
     @endif
     <div class="mb-3">
-        <label for="name" class="form-label">Название района*</label>
-        <input name="name" type="text" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Название района" value="{{old('name')}}">
+        <label for="name" class="form-label">Название округа*</label>
+        <input name="name" type="text" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Название округа" value="{{old('name')}}">
         @error('name')
         <div class="invalid-feedback">
             {{$message}}

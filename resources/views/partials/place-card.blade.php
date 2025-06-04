@@ -23,22 +23,27 @@
                     @if($place->category->name == 'Картинги')
                     <div>Цена заезда: от {{ $place->check_in_price_from }}₽ до {{ $place->check_in_price_to }}₽</div>
                     @elseif($place->average_bill != null)
-                    <div class="place-card__categ-separator">-</div>
+                    {{-- <div class="place-card__categ-separator">-</div>
                     <div class="place-card__average-bill-row" data-bs-trigger="hover" data-bs-toggle="popover" title="График работы" data-bs-placement="top" data-bs-template='<div class="popover average-bill-popover" role="tooltip"><div class="popover-arrow"></div><div class="popover-body d-flex flex-column"></div></div>' data-bs-html="true" data-bs-content="@include('partials.average-bill-popup')">
                         @foreach(App\Models\Place::getAvailableRanges() as $rangeNumber => $range)
                         <span class="place-card__average-bill-ruble @if(App\Models\Place::getAverageCheckRange($place->average_bill)['range_number'] >=  $rangeNumber) active @endif">₽</span>
                         @endforeach
-                    </div>
+                    </div> --}}
                     @endif
                 </div>
             </div>
-            <div class="place-card__atmosphere">
+            @if($place->average_bill != null && $place->category->name != 'Картинги')
+            <div class="place-price-second">
+                Средний чек - {{  $place->average_bill }} ₽
+            </div>
+            @endif
+            {{-- <div class="place-card__atmosphere">
                 @if($place->atmosphere_text == 'Тихое место')
                 <i class="fas fa-volume-mute"></i> {{ $place->atmosphere_text; }}
                 @else
                 <i class="fas fa-volume-up"></i> {{ $place->atmosphere_text; }}
                 @endif
-            </div>
+            </div> --}}
             <p class="place-address">
                 <i class="fas fa-map-marker-alt"></i>
                 {{ $place->address }}

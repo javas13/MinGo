@@ -77,14 +77,14 @@
                 </li>
                 <li class="bf-first-item js-menu bf-first-item-li bf-has-submenu bf-not-current-submenu menu-top menu-top-first">
                     <a href="{{route('admin.districts')}}" class="bf-has-submenu bf-first-item-link bf-not-current-submenu menu-top">
-                        <div class="bf-menu-name"><i class="fa-solid fa-image mx-2"></i>Районы</div>
+                        <div class="bf-menu-name"><i class="fa-solid fa-image mx-2"></i>Округа</div>
                     </a>
                     <ul class="bf-submenu bf-submenu-wrap">
                         <li>
-                            <a href="{{route('admin.districts')}}">Все районы</a>
+                            <a href="{{route('admin.districts')}}">Все округа</a>
                         </li>
                         <li>
-                            <a href="{{route('admin.districts.add')}}">Добавить район</a>
+                            <a href="{{route('admin.districts.add')}}">Добавить округ</a>
                         </li>
                     </ul>
                 </li>

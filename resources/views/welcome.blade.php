@@ -19,7 +19,7 @@
 	
 	<div class="container">
 		<div class="hero-content">
-			<h1 class="display-4 fw-bold mb-4">Найди идеальное место за 60 секунд</h1>
+			<h1 class="display-4 welcome-title fw-bold mb-4">Найди наиболее подходящее место на основе индивидуальных предпочтений за 60 секунд</h1>
 			<p class="lead mb-5">Персонализированный подбор подходящих мест по вашим предпочтениям</p>
 			<button data-bs-toggle="modal" data-bs-target="#quizModal" class="go-btn">GO</button>
 		</div>

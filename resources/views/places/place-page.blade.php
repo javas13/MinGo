@@ -40,10 +40,14 @@
                         <img style="position: absolute; height: 100%; width: 100%; inset: 0px; color: transparent;" src="@if($place->image_src == null) /img/admin/no-image.png @else {{ $place->image_src }} @endif" alt="">
                     </div>
                 </div>
+                <div class="place-page__another-info">
+                @isset($place->phone_formatted )
                 <div class="place-page__phone-row">
                     <i class="fas fa-phone fa-flip-horizontal place-page__phone-icon"></i>
-                    <a href="tel:{{ $place->phone_numeric }}" class="place-page__phone-number">{{ $place->phone_formatted }}</a>
+                    <a href="tel:{{ $place->phone_numeric }}" class="place-page__phone-number">{{ $place->phone_formatted }}</a>      
                 </div>
+                 @endisset
+                </div>                
                 <div class="place-page__short-info">
                     <h1 class="place-page__title">{{ $place->name }}</h1>
                     <div class="@if($place->category->name == 'Картинги') place-card__category-col @else place-page__category-row @endif">
@@ -51,21 +55,26 @@
                         @if($place->category->name == 'Картинги')
                         <div class="place-page__carting-price">Цена заезда: от {{ $place->check_in_price_from }}₽ до {{ $place->check_in_price_to }}₽</div>
                         @elseif($place->average_bill != null)
-                        <div class="place-page__categ-separator">-</div>
+                        {{-- <div class="place-page__categ-separator">-</div>
                         <div class="place-page__average-bill-row" data-bs-trigger="hover" data-bs-toggle="popover" title="График работы" data-bs-placement="top" data-bs-template='<div class="popover average-bill-popover" role="tooltip"><div class="popover-arrow"></div><div class="popover-body d-flex flex-column"></div></div>' data-bs-html="true" data-bs-content="@include('partials.average-bill-popup')">
                             @foreach(App\Models\Place::getAvailableRanges() as $rangeNumber => $range)
                             <span class="place-page__average-bill-ruble @if(App\Models\Place::getAverageCheckRange($place->average_bill)['range_number'] >=  $rangeNumber) active @endif">₽</span>
                             @endforeach
-                        </div>
+                        </div> --}}
                         @endif
                     </div>
-                    <div class="place-page__atmosphere">
+                    @if($place->average_bill != null && $place->category->name != 'Картинги')
+                    <div class="place-page__place-price-second">
+                        Средний чек - {{  $place->average_bill }} ₽
+                    </div>
+                    @endif
+                    {{-- <div class="place-page__atmosphere">
                         @if($place->atmosphere_text == 'Тихое место')
                         <i class="fas fa-volume-mute"></i> {{ $place->atmosphere_text; }}
                         @else
                         <i class="fas fa-volume-up"></i> {{ $place->atmosphere_text; }}
                         @endif
-                    </div>
+                    </div> --}}
                     <div class="place-page__address">{{ $place->address }}</div>
                     @if($place->is_schedule_active == true)
                     <div class="position-relative place-page__shedule-wrap">
