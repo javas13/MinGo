@@ -29,8 +29,8 @@
 					<div class="header__burger-one"></div>
 					<div class="header__burger-one"></div>
 				</div>
-				<a class="navbar-brand logo" href="/">
-					<i class="fas fa-utensils me-2"></i>MinGo
+				<a class="navbar-brand logo header-logo" href="/">
+					<img src="/img/logo.jpg" alt="">
 				</a>
                 <div class="header__mobile-stub"></div>				
 				<div class="header__right-nav collapse navbar-collapse" id="navbarNav">
@@ -161,8 +161,8 @@
             <div class="row g-4">
                 <!-- Колонка с лого и соцсетями -->
                 <div class="col-md-4">
-					<a class="footer-logo" href="/">
-						<h3 class="logo mb-3">MinGo</h3>
+					<a class="footer-logo logo" href="/">
+						<img src="/img/logo.jpg" alt="">
 					</a>
                     <div class="social-links">
                         <a href="#" target="_blank" rel="nofollow" class="text-secondary me-3"><i class="fab fa-telegram-plane fa-lg"></i></a>
