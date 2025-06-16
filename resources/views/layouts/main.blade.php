@@ -30,7 +30,7 @@
 					<div class="header__burger-one"></div>
 				</div>
 				<a class="navbar-brand logo header-logo" href="/">
-					<img src="/img/logo.jpg" alt="">
+					<img src="/img/logo.png" alt="">
 				</a>
                 <div class="header__mobile-stub"></div>				
 				<div class="header__right-nav collapse navbar-collapse" id="navbarNav">
@@ -162,7 +162,7 @@
                 <!-- Колонка с лого и соцсетями -->
                 <div class="col-md-4">
 					<a class="footer-logo logo" href="/">
-						<img src="/img/logo.jpg" alt="">
+						<img src="/img/logo.png" alt="">
 					</a>
                     <div class="social-links">
                         <a href="#" target="_blank" rel="nofollow" class="text-secondary me-3"><i class="fab fa-telegram-plane fa-lg"></i></a>
